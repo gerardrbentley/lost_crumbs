@@ -1,0 +1,82 @@
+site_name: Lost Crumbs
+copyright: Copyright &copy; 2020 - 2023 Gerard Bentley
+theme:
+  name: material
+  favicon: images/favicon.png
+  icon:
+    logo: material/bread-slice
+    repo: fontawesome/brands/github
+  features:
+    - navigation.indexes
+    - navigation.instant
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - navigation.tracking
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - search.share
+    - header.autohide
+  palette: 
+    # Palette toggle for light mode
+    - scheme: default
+      primary: teal
+      toggle:
+        icon: material/weather-sunny 
+        name: Switch to dark mode
+    # Palette toggle for dark mode
+    - scheme: slate
+      primary: teal
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
+repo_url: https://github.com/gerardrbentley/lost_crumbs
+repo_name: gerardrbentley/lost_crumbs
+edit_uri: edit/main/docs/
+extra:
+  social:
+    - icon: fontawesome/brands/mastodon 
+      link: https://gerardbentley.com/@gar
+    - icon: fontawesome/brands/twitter 
+      link: https://twitter.com/garsbar35plus
+    - icon: fontawesome/brands/github
+      link: https://github.com/gerardrbentley
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/gerardrbentley/
+extra_css:
+  - stylesheets/youtube.css
+plugins:
+  - search
+  # - social
+  - git-revision-date-localized:
+      enable_creation_date: true
+  - awesome-pages
+  - tags:
+      tags_file: tags.md
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      linenums: true
+      auto_title: true
+  - attr_list
+  - md_in_html
+  - pymdownx.superfences 
+  - admonition
+  - pymdownx.details
+  - pymdownx.tasklist:
+      custom_checkbox: true
+      clickable_checkbox: false
+  - toc:
+      permalink: 🔗
+      title: Page Index
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+nav:
+  - Home: index.md
+  - ... | blog/**/*.md
+  - ... | guides/**/*.md
+  - ... | resources/**/*.md
+  - ... | setups/**/*.md
+  - ...
