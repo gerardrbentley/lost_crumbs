@@ -1,0 +1,9 @@
+services:
+  backend:
+    build: ./
+    command: mkdocs serve -a 0.0.0.0:8000
+    volumes:
+      - ./:/home/appuser
+    ports:
+      - 8000:8000
+    restart: unless-stopped

@@ -12,6 +12,7 @@ theme:
     - navigation.tabs
     - navigation.tabs.sticky
     - navigation.top
+    - navigation.footer
     - navigation.tracking
     - toc.follow
     - search.suggest
@@ -48,10 +49,10 @@ extra_css:
   - stylesheets/youtube.css
 plugins:
   - search
-  # - social
+  - awesome-pages
+  - social
   - git-revision-date-localized:
       enable_creation_date: true
-  - awesome-pages
   - tags:
       tags_file: tags.md
 markdown_extensions:
