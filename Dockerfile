@@ -19,6 +19,4 @@ RUN useradd --create-home appuser
 WORKDIR /home/appuser
 USER appuser
 
-RUN git config --global --add safe.directory /home/appuser
-
 COPY . .

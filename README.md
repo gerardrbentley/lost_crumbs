@@ -10,6 +10,9 @@ mkdocs serve
 
 # Convert notebooks to blogs
 python ./scripts/convert_notebooks.py
+
+docker-compose exec backend python3 scripts/convert_notebooks.py && python3 scripts/inject_titles.py
+
 ```
 
 ## Dependencies
