@@ -6,7 +6,7 @@ hide:
   - toc
 ---
 
-## Welcome :beers:
+## Welcome 🍻
 
 I'm Gerard Bentley, a software engineer interested in the web, machine learning, and how both impact us.
 This is my blog and technical notes; feel free to poke around.
@@ -18,7 +18,7 @@ Most excited about time series data for environmental and social impact.
 - [Github](https://github.com/gerardrbentley)
 - [Fediverse](https://gerardbentley.com/@gar)
 - [Linkedin](https://www.linkedin.com/in/gerardrbentley/) if that's how you connect
-- [Resume](https://tech.gerardbentley.com/assets/gerard_bentley_resume.pdf) 
+- [Resume](https://tech.gerardbentley.com/assets/gerard_bentley_resume.pdf)
 
 This site is generated from Markdown files with [MkDocs](https://www.mkdocs.org/) along with [MkDocs Material](https://squidfunk.github.io/mkdocs-material/).
 
@@ -74,15 +74,15 @@ Deployed with 3 increasingly complicated backends.
 
 See: [Github Repo](https://github.com/gerardrbentley/streamlit-fullstack)
 
-#### :mouse: Littlest
+### :mouse: Littlest
 
 [![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io/gerardrbentley/streamlit-fullstack/app.py)
 
-#### :elephant: Postgres Version
+### :elephant: Postgres Version
 
 [![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://streamlit-postgres.gerardbentley.com/)
 
-#### :rat: Go Backend Version
+### :rat: Go Backend Version
 
 [![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://st-pg-go.gerardbentley.com/)
 
@@ -112,7 +112,6 @@ Data Science project based on DrivenData "Pump It Up" competition.
 Includes Data Exploration, Feature Engineering, and training and predicting functionality of water pumps with LightGBM
 
 See: [Github Repo](https://github.com/gerardrbentley/pump-it-up)
-
 
 ## 💰 Personal Spending Dashboard
 
