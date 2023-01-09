@@ -18,4 +18,5 @@ jobs:
           key: ${{ github.ref }}
           path: .cache
       - run: pip install -r requirements.txt
+      - run: python3 scripts/convert_notebooks.py && python3 scripts/inject_titles.py
       - run: mkdocs gh-deploy --force
