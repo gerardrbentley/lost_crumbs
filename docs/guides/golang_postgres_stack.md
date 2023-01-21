@@ -550,3 +550,5 @@ create index index_pages_on_tsv on place using gin (tsv);
 
 \copy place("food_resource_type", "agency", "location", "operational_status", "operational_notes", "who_they_serve", "address", "latitude", "longitude", "phone_number", "website", "days_or_hours", "date_updated") from '/tmp/sample_data/Emergency_Food_and_Meals_Seattle_and_King_County.csv' with null as E'\'\'' delimiter ',' CSV HEADER
 ```
+
+And that's a wrap.
