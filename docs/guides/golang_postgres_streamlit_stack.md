@@ -16,7 +16,7 @@ Code available on Github branch [`streamlit-reader`](https://github.com/gerardrb
 
 ## Preface
 
-Starts from `golang_postgres_stack` leaves off.
+Starts from where [Project Golang Postgres Stack](/guides/golang_postgres_stack) leaves off.
 
 ```sh
 # Starting in project directory
@@ -43,7 +43,7 @@ Goals:
 - data display as a table
 - map out locations that have latitude and longitude information
 
-```py file="frontend/streamlit_app.py"
+```py title="frontend/streamlit_app.py"
 import streamlit as st
 import httpx
 import os
@@ -80,7 +80,7 @@ st.map(map_data)
 
 Python `requirements.txt` file works fine for specifying package versions needed.
 
-```txt file="frontend/requirements.txt"
+```txt title="frontend/requirements.txt"
 httpx==0.23.3
 streamlit==1.17.0
 ```
@@ -89,7 +89,7 @@ streamlit==1.17.0
 
 To build the streamlit app in docker we need a dockerfile
 
-```docker file="frontend/Dockerfile"
+```docker title="frontend/Dockerfile"
 # pull official base image
 FROM python:3.10-buster
 
@@ -120,7 +120,7 @@ ENTRYPOINT [ "python", "-m", "streamlit", "run", "streamlit_app.py"]
 
 Adding a new `service` entry is all that's needed to get this spun up with `docker-compose up --build`
 
-```yaml file="docker-compose.yml"
+```yaml title="docker-compose.yml"
 services:
   frontend:
     ports:

@@ -468,7 +468,7 @@ Docker-compose is a straightforward way to handle this networking.
 
 A go application can be built and ran in a Docker container, optionally distroless (comment last `FROM` and `COPY` steps to maintain shell access).
 
-```docker file="backend/Dockerfile"
+```docker title="backend/Dockerfile"
 FROM golang:1.19.3-buster AS build
 
 WORKDIR /src/github.com/gerardrbentley/places/
