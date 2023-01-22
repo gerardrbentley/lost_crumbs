@@ -14,6 +14,8 @@ This app looks up locations from a static table.
 
 For simplicity, it's all treated as text.
 
+Code available on Github branch [`read-postgres`](https://github.com/gerardrbentley/golang-webservices/tree/read-postgres)
+
 ```sh
 # Open terminal to desired project directory
 cd ~/projects
