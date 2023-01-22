@@ -23,6 +23,8 @@ cd ~/projects
 mkdir places
 # Enter the directory
 cd places
+# Make docker-compose config file
+touch docker-compose.yml
 
 # Make directory for the go backend server
 mkdir backend
@@ -43,10 +45,13 @@ touch handler/place.go handler/place_test.go
 mkdir service
 # Make files for service code
 touch service/place.go service/place_test.go
+# Make dockerfile for building
+touch Dockerfile
 # Run tests
 go test ./...
 
-# Run stack
+# Run stack. (cd from `backend` to `places`)
+cd ..
 docker-compose up --build
 # Tear down stack and database
 docker-compose down --volumes --remove-orphans
@@ -225,7 +230,7 @@ func (s *PgPlaceService) LookupByName(searchName string) ([]PlaceRecord, error) 
 			"website",
 			"days_or_hours",
 			"date_updated" 
-		from place where tsv @@ to_tsquery($1);`,
+		from place where tsv @@ plainto_tsquery($1);`,
 		searchName)
 	if err != nil {
 		log.Printf("Query failed: %v\n", err)
@@ -486,7 +491,7 @@ CMD ["/bin/app"]
 
 This allows one command to spin up and down all or individual database and webserver.
 
-```yaml file="docker-compose.yml"
+```yaml title="docker-compose.yml"
 services:
   backend:
     build: ./backend
@@ -522,7 +527,7 @@ Data source from [http://www.seattle.gov/humanservices/](http://www.seattle.gov/
 
 To load the table into postgres and add a text search index we can use a sql script such as the following:
 
-```sql file="sample_data/load_places_data.sql"
+```sql title="sample_data/load_places_data.sql"
 drop table if exists place;
 
 create table place (
