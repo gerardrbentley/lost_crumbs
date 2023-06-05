@@ -14,8 +14,8 @@ date: 2023-06-04
 
 ## Inspiration
 
-- https://duckdb.org/2023/05/26/correlated-subqueries-in-sql.html
-- https://cs.emis.de/LNI/Proceedings/Proceedings241/383.pdf
+- [https://duckdb.org/2023/05/26/correlated-subqueries-in-sql.html]()
+- [https://cs.emis.de/LNI/Proceedings/Proceedings241/383.pdf]()
 - Blog Posts about CTEs vs Subqueries
 
 ## TL;DR
@@ -504,7 +504,7 @@ Would you rather spend the mental cycles re-writing it to a CTE or move on with 
 
 Keep exploring!
 
-- https://duckdb.org/2023/05/26/correlated-subqueries-in-sql.html
-- https://duckdb.org/2022/09/30/postgres-scanner.html
-- https://hakibenita.com/be-careful-with-cte-in-postgre-sql
-- https://cs.emis.de/LNI/Proceedings/Proceedings241/383.pdf
+- [https://duckdb.org/2023/05/26/correlated-subqueries-in-sql.html]()
+- [https://duckdb.org/2022/09/30/postgres-scanner.html]()
+- [https://hakibenita.com/be-careful-with-cte-in-postgre-sql]()
+- [https://cs.emis.de/LNI/Proceedings/Proceedings241/383.pdf]()
