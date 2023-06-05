@@ -1,5 +1,5 @@
 ---
-title: "CTE vs Subqueries: Who gives a 🦆uck?"
+title: "CTE vs Subquery: Who gives a 🦆uck?"
 description: Exploring query structure in postgres and duckdb
 categories: 
     - data
@@ -10,7 +10,7 @@ tags:
 date: 2023-06-04
 ---
 
-# CTE vs Subqueries: Who gives a 🦆uck?
+# CTE vs Subquery: Who gives a 🦆uck?
 
 ## Inspiration
 
