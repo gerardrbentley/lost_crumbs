@@ -14,8 +14,8 @@ date: 2023-06-04
 
 ## Inspiration
 
-- [https://duckdb.org/2023/05/26/correlated-subqueries-in-sql.html]()
-- [https://cs.emis.de/LNI/Proceedings/Proceedings241/383.pdf]()
+- [https://duckdb.org/2023/05/26/correlated-subqueries-in-sql.html](https://duckdb.org/2023/05/26/correlated-subqueries-in-sql.html)
+- [https://cs.emis.de/LNI/Proceedings/Proceedings241/383.pdf](https://cs.emis.de/LNI/Proceedings/Proceedings241/383.pdf)
 - Blog Posts about CTEs vs Subqueries
 
 ## TL;DR
@@ -90,7 +90,7 @@ In comes the OLAP-centric duckdb and de-correlated queries so we can have our ca
 We'll run these queries over a duckdb database and compare their performance.
 (HINT: they're the same in duckdb)
 
-You can follow along with this experience in your browser; visit [https://shell.duckdb.org]() to open a duckdb shell.
+You can follow along with this experience in your browser; visit [https://shell.duckdb.org](https://shell.duckdb.org) to open a duckdb shell.
 
 Then we'll show that you can bring these benefits over to a live postgres instance with the duckdb postgres scanner extension!
 
@@ -143,9 +143,9 @@ from generate_series(1, 10),
 
 You should see something like the following in your shell:
 
-| Count |
----
-| 1000000 |
+    | Count |
+    ---------
+    | 1000000 |
 
 ### Subquery
 
@@ -504,7 +504,7 @@ Would you rather spend the mental cycles re-writing it to a CTE or move on with 
 
 Keep exploring!
 
-- [https://duckdb.org/2023/05/26/correlated-subqueries-in-sql.html]()
-- [https://duckdb.org/2022/09/30/postgres-scanner.html]()
-- [https://hakibenita.com/be-careful-with-cte-in-postgre-sql]()
-- [https://cs.emis.de/LNI/Proceedings/Proceedings241/383.pdf]()
+- [https://duckdb.org/2023/05/26/correlated-subqueries-in-sql.html](https://duckdb.org/2023/05/26/correlated-subqueries-in-sql.html)
+- [https://duckdb.org/2022/09/30/postgres-scanner.html](https://duckdb.org/2022/09/30/postgres-scanner.html)
+- [https://hakibenita.com/be-careful-with-cte-in-postgre-sql](https://hakibenita.com/be-careful-with-cte-in-postgre-sql)
+- [https://cs.emis.de/LNI/Proceedings/Proceedings241/383.pdf](https://cs.emis.de/LNI/Proceedings/Proceedings241/383.pdf)
