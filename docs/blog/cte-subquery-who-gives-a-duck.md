@@ -74,7 +74,8 @@ with
 select students.name,
     exams.course
 from students,
-    exams
+    exams,
+    min_exam_grades
 where students.id = exams.sid
     and min_exam_grades.id = students.id
     and exams.grade = min_exam_grades.best;
