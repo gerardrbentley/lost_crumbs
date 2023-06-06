@@ -64,16 +64,17 @@ The performance of this query in postgres is *atrocious*.
 On the other hand, the performance of this completely equivalent query using a Common Table Expression (CTE) is *very passable* in postgres:
 
 ```sql
-select students.name,
-    exams.course
-from students,
-    exams,
-    (
+with 
+    min_exam_grades as (
         select e2.sid as id,
             min(e2.grade) as best
         from exams e2
         group by e2.sid
-    ) min_exam_grades
+    )
+select students.name,
+    exams.course
+from students,
+    exams
 where students.id = exams.sid
     and min_exam_grades.id = students.id
     and exams.grade = min_exam_grades.best;
@@ -504,6 +505,7 @@ Would you rather spend the mental cycles re-writing it to a CTE or move on with 
 
 Keep exploring!
 
+- More on this example from [@FrankPachot](https://twitter.com/FranckPachot/status/1665960170222919680?s=20): [dbfiddle.uk/wLZ4H496](dbfiddle.uk/wLZ4H496)
 - [https://duckdb.org/2023/05/26/correlated-subqueries-in-sql.html](https://duckdb.org/2023/05/26/correlated-subqueries-in-sql.html)
 - [https://duckdb.org/2022/09/30/postgres-scanner.html](https://duckdb.org/2022/09/30/postgres-scanner.html)
 - [https://hakibenita.com/be-careful-with-cte-in-postgre-sql](https://hakibenita.com/be-careful-with-cte-in-postgre-sql)
