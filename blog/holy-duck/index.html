@@ -1,0 +1,3037 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Trying out some new speedy tools for data analysis">
+      
+      
+      
+        <link rel="canonical" href="https://home.gerardbentley.com/blog/holy-duck/">
+      
+      
+        <link rel="prev" href="../gitlab-workflow/">
+      
+      
+        <link rel="next" href="../how-i-code/">
+      
+      <link rel="icon" href="../../images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.0.2">
+    
+    
+      
+        <title>Holy 🦆uck! Fast Analysis with DuckDB + Pyarrow - Lost Crumbs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.f56500e0.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.2505c338.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/youtube.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+      
+        <meta  property="og:type"  content="website" >
+      
+        <meta  property="og:title"  content="Holy 🦆uck! Fast Analysis with DuckDB + Pyarrow - Lost Crumbs" >
+      
+        <meta  property="og:description"  content="Trying out some new speedy tools for data analysis" >
+      
+        <meta  property="og:image"  content="https://home.gerardbentley.com/assets/images/social/blog/holy-duck.png" >
+      
+        <meta  property="og:image:type"  content="image/png" >
+      
+        <meta  property="og:image:width"  content="1200" >
+      
+        <meta  property="og:image:height"  content="630" >
+      
+        <meta  property="og:url"  content="https://home.gerardbentley.com/blog/holy-duck/" >
+      
+        <meta  name="twitter:card"  content="summary_large_image" >
+      
+        <meta  name="twitter:title"  content="Holy 🦆uck! Fast Analysis with DuckDB + Pyarrow - Lost Crumbs" >
+      
+        <meta  name="twitter:description"  content="Trying out some new speedy tools for data analysis" >
+      
+        <meta  name="twitter:image"  content="https://home.gerardbentley.com/assets/images/social/blog/holy-duck.png" >
+      
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#holy-uck-fast-analysis-with-duckdb-pyarrow" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Lost Crumbs" class="md-header__button md-logo" aria-label="Lost Crumbs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2c5.5 0 10 3.36 10 7.5 0 1.69-.74 3.25-2 4.5v8H4v-8c-1.26-1.25-2-2.81-2-4.5C2 5.36 6.5 2 12 2M8 18h4v-4H8v4Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Lost Crumbs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Holy 🦆uck! Fast Analysis with DuckDB + Pyarrow
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent=""  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"/></svg>
+            </label>
+          
+        
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent=""  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08Z"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gerardrbentley/lost_crumbs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    gerardrbentley/lost_crumbs
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../.." class="md-tabs__link">
+      Home
+    </a>
+  </li>
+
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../" class="md-tabs__link md-tabs__link--active">
+        Blog
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../guides/" class="md-tabs__link">
+        Guides
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../resources/" class="md-tabs__link">
+        Resources
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../setups/" class="md-tabs__link">
+        Setups
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../tags/" class="md-tabs__link">
+      Tags
+    </a>
+  </li>
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Lost Crumbs" class="md-nav__button md-logo" aria-label="Lost Crumbs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2c5.5 0 10 3.36 10 7.5 0 1.69-.74 3.25-2 4.5v8H4v-8c-1.26-1.25-2-2.81-2-4.5C2 5.36 6.5 2 12 2M8 18h4v-4H8v4Z"/></svg>
+
+    </a>
+    Lost Crumbs
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gerardrbentley/lost_crumbs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    gerardrbentley/lost_crumbs
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
+      
+      
+      
+        
+          
+            
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../">Blog</a>
+          
+            <label for="__nav_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="Blog" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Blog
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bottle-htmx-streamlit/" class="md-nav__link">
+        Bottle + HTMX vs Streamlit
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../brain-dump-2022/" class="md-nav__link">
+        Brain Dump 2022
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../computer-vision-part-1/" class="md-nav__link">
+        Computer Vision Part 1: Loading Images with Python
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../computer-vision-part-2/" class="md-nav__link">
+        Computer Vision Part 2: Load Tagged Data With Pytorch
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../computer-vision-part-3/" class="md-nav__link">
+        Computer Vision Part 3: Train U-Net Architecture to predict UI segmentation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cte-subquery-who-gives-a-duck/" class="md-nav__link">
+        CTE vs Subquery: Who gives a 🦆uck?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gitlab-workflow/" class="md-nav__link">
+        Gitlab Workflow Project Management
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Holy 🦆uck! Fast Analysis with DuckDB + Pyarrow
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Holy 🦆uck! Fast Analysis with DuckDB + Pyarrow
+      </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="Page Index">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Page Index
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#background" class="md-nav__link">
+    Background
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nyc-uber-data" class="md-nav__link">
+    NYC Uber Data
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#enter-the-duck" class="md-nav__link">
+    Enter the Duck
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#filtration" class="md-nav__link">
+    Filtration
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#larger-than-memory-data" class="md-nav__link">
+    Larger Than Memory Data
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusions" class="md-nav__link">
+    Conclusions
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-i-code/" class="md-nav__link">
+        How I Edit Text Files (VS Code Settings)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lightgbm-water-pumps/" class="md-nav__link">
+        LightGBM Predicting Water Pump Functionality
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../my-favorite-python-one-liner-sucks/" class="md-nav__link">
+        My Favorite Python One Liner Sucks
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../personal-domain/" class="md-nav__link">
+        Share a website to the world in less than a day (Free for Students!)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pipreqs-fastapi/" class="md-nav__link">
+        Pipreqs FastAPI Server + Github Bot
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../python-form-generator/" class="md-nav__link">
+        Python Form Generator (JSON to Streamlit Form!)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../run-python/" class="md-nav__link">
+        3 Ways to Run Python Code
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../streamlit-fullstack/" class="md-nav__link">
+        Streamlit Full Stack Part 1: Python Web App in One File
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../streamlit-url-scan/" class="md-nav__link">
+        Scanning URLs from Images
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../terminal/" class="md-nav__link">
+        The Terminal (/ Shell / Command Line / Console)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../timeseries-part-1/" class="md-nav__link">
+        Time Series Data Part 1: What is a Time Series?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../timeseries-part-2/" class="md-nav__link">
+        Time Series Data Part 2: Darts and Streamlit
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../timeseries-part-3/" class="md-nav__link">
+        Time Series Data Part 3: Custom Model Tuning
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../timeseries-part-4/" class="md-nav__link">
+        Time Series Data Part 4: A Full Stack Use Case
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vgac-tagging/" class="md-nav__link">
+        Custom Data Tagging with Python OpenCV
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../weather-forecast-dashboard/" class="md-nav__link">
+        Checking 48 Mountain Weather Locations at Once
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+        
+          
+            
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../guides/">Guides</a>
+          
+            <label for="__nav_3">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="Guides" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Guides
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/geoparquet_intro/" class="md-nav__link">
+        GeoParquet Intro
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/golang_postgres_stack/" class="md-nav__link">
+        Project Golang Postgres Stack
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/golang_postgres_streamlit_stack/" class="md-nav__link">
+        Project Golang Postgres Streamlit Stack
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/golang_webserver/" class="md-nav__link">
+        Project Golang Webserver
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+        
+          
+            
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../resources/">Resources</a>
+          
+            <label for="__nav_4">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="Resources" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Resources
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/ci_cd/" class="md-nav__link">
+        CI/CD
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/circleci/" class="md-nav__link">
+        CircleCI
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/curl/" class="md-nav__link">
+        curl
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/frontend/" class="md-nav__link">
+        Frontend
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/gatsby/" class="md-nav__link">
+        Gatsby
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/git/" class="md-nav__link">
+        Git
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/gitlab/" class="md-nav__link">
+        Gitlab
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/golang/" class="md-nav__link">
+        Golang
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/graphql/" class="md-nav__link">
+        GraphQL
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/heroku/" class="md-nav__link">
+        Heroku
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/javascript/" class="md-nav__link">
+        Javascript
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/linux/" class="md-nav__link">
+        Linux
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/local_network/" class="md-nav__link">
+        Local Network
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/local_server/" class="md-nav__link">
+        Local Server
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/machine_learning/" class="md-nav__link">
+        Machine Learning
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/markdown/" class="md-nav__link">
+        Markdown
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/node/" class="md-nav__link">
+        Node JS
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/open_source/" class="md-nav__link">
+        Open Source
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/postgres/" class="md-nav__link">
+        Postgres
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/python/" class="md-nav__link">
+        Python
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/react/" class="md-nav__link">
+        React JS
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/reverse_proxy/" class="md-nav__link">
+        Reverse Proxy
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/scp/" class="md-nav__link">
+        SCP
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/time_series/" class="md-nav__link">
+        Time Series
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/windows/" class="md-nav__link">
+        Windows
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/yaml/" class="md-nav__link">
+        YAML
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      
+      
+        
+          
+            
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../setups/">Setups</a>
+          
+            <label for="__nav_5">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="Setups" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Setups
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setups/docker/" class="md-nav__link">
+        Docker
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setups/domain/" class="md-nav__link">
+        Domain Name
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setups/git/" class="md-nav__link">
+        Git
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setups/golang/" class="md-nav__link">
+        Golang
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setups/ide/" class="md-nav__link">
+        IDE
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setups/macos/" class="md-nav__link">
+        macOS
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setups/nginx_proxy_manager/" class="md-nav__link">
+        Nginx Proxy Manager
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setups/postgres/" class="md-nav__link">
+        Postgres
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setups/python/" class="md-nav__link">
+        Python
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setups/ssh/" class="md-nav__link">
+        SSH
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setups/terminal/" class="md-nav__link">
+        Terminal
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setups/vps/" class="md-nav__link">
+        VPS
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tags/" class="md-nav__link">
+        Tags
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="Page Index">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Page Index
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#background" class="md-nav__link">
+    Background
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nyc-uber-data" class="md-nav__link">
+    NYC Uber Data
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#enter-the-duck" class="md-nav__link">
+    Enter the Duck
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#filtration" class="md-nav__link">
+    Filtration
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#larger-than-memory-data" class="md-nav__link">
+    Larger Than Memory Data
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusions" class="md-nav__link">
+    Conclusions
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+  
+
+  <nav class="md-tags" >
+    
+      
+      
+        <a href="../../tags/#python" class="md-tag">python</a>
+      
+    
+      
+      
+        <a href="../../tags/#data" class="md-tag">data</a>
+      
+    
+      
+      
+        <a href="../../tags/#intermediate" class="md-tag">intermediate</a>
+      
+    
+  </nav>
+
+
+
+  
+  
+
+
+
+<h1 id="holy-uck-fast-analysis-with-duckdb-pyarrow">Holy 🦆uck! Fast Analysis with DuckDB + Pyarrow<a class="headerlink" href="#holy-uck-fast-analysis-with-duckdb-pyarrow" title="Permanent link">🔗</a></h1>
+<p>Turning to DuckDB when you need to crunch more numbers faster than pandas in your Streamlit app 🎈</p>
+<p>Inspired by "DuckDB quacks Arrow" blogpost cross-posted on <a href="https://duckdb.org/2021/12/03/duck-arrow.html">duckdb</a> and <a href="https://arrow.apache.org/blog/2021/12/03/arrow-duckdb/">arrow</a></p>
+<p><a href="https://share.streamlit.io/gerardrbentley/uber-nyc-pickups-duckdb/main/streamlit_app_duck.py"><img alt="Open in Streamlit" src="https://static.streamlit.io/badges/streamlit_badge_black_white.svg" /></a></p>
+<h2 id="background">Background<a class="headerlink" href="#background" title="Permanent link">🔗</a></h2>
+<p><code>streamlit</code> and Streamlit Cloud are fantastic for sharing your data exploration apps.
+A very common pattern uses csv files with <code>pandas</code> to accomplish the necessary steps of:</p>
+<ul>
+<li>Load the data into the program</li>
+<li>Filter data by certain columns or attributes</li>
+<li>Compute analyses on the data (averages, counts, etc.)</li>
+</ul>
+<h2 id="nyc-uber-data">NYC Uber Data<a class="headerlink" href="#nyc-uber-data" title="Permanent link">🔗</a></h2>
+<ul>
+<li>Streamlit DuckDB Uber NYC <a href="https://github.com/gerardrbentley/uber-nyc-pickups-duckdb">repo</a></li>
+<li>Includes 10 Year, 1.5 Billion row Taxi data example as well</li>
+<li>Streamlit Original Uber NYC <a href="https://github.com/streamlit/demo-uber-nyc-pickups">repo</a></li>
+</ul>
+<p>Let's take this NYC Uber dataset example from Streamlit.
+We'll pay attention to:</p>
+<ul>
+<li>How much RAM / memory is used</li>
+<li>How long it takes to perform each step</li>
+</ul>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-0-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-0-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-0-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-0-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-0-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-0-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-0-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-0-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-0-10">10</a></span>
+<span class="normal"><a href="#__codelineno-0-11">11</a></span>
+<span class="normal"><a href="#__codelineno-0-12">12</a></span>
+<span class="normal"><a href="#__codelineno-0-13">13</a></span>
+<span class="normal"><a href="#__codelineno-0-14">14</a></span>
+<span class="normal"><a href="#__codelineno-0-15">15</a></span>
+<span class="normal"><a href="#__codelineno-0-16">16</a></span>
+<span class="normal"><a href="#__codelineno-0-17">17</a></span>
+<span class="normal"><a href="#__codelineno-0-18">18</a></span>
+<span class="normal"><a href="#__codelineno-0-19">19</a></span>
+<span class="normal"><a href="#__codelineno-0-20">20</a></span>
+<span class="normal"><a href="#__codelineno-0-21">21</a></span>
+<span class="normal"><a href="#__codelineno-0-22">22</a></span>
+<span class="normal"><a href="#__codelineno-0-23">23</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="c1"># import streamlit as st</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4"></a>
+<a id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="c1"># singleton ignored because we&#39;re not in streamlit anymore</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="c1"># @st.experimental_singleton</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7"></a><span class="k">def</span> <span class="nf">load_data</span><span class="p">():</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8"></a>    <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9"></a>        <span class="s2">&quot;uber-raw-data-sep14.csv.gz&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10"></a>        <span class="n">nrows</span><span class="o">=</span><span class="mi">100000</span><span class="p">,</span>  <span class="c1"># approx. 10% of data</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11"></a>        <span class="n">names</span><span class="o">=</span><span class="p">[</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12"></a>            <span class="s2">&quot;date/time&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13"></a>            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14"></a>            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15"></a>        <span class="p">],</span>  <span class="c1"># specify names directly since they don&#39;t change</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16"></a>        <span class="n">skiprows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># don&#39;t read header since names specified directly</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17"></a>        <span class="n">usecols</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>  <span class="c1"># doesn&#39;t load last column, constant value &quot;B02512&quot;</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18"></a>        <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19"></a>            <span class="s2">&quot;date/time&quot;</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20"></a>        <span class="p">],</span>  <span class="c1"># set as datetime instead of converting after the fact</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21"></a>    <span class="p">)</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22"></a>
+<a id="__codelineno-0-23" name="__codelineno-0-23"></a>    <span class="k">return</span> <span class="n">data</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
+<span class="normal"><a href="#__codelineno-1-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="o">%%</span><span class="n">time</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="n">data</span> <span class="o">=</span> <span class="n">load_data</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code>CPU times: user 2.99 s, sys: 48.1 ms, total: 3.04 s
+Wall time: 2.94 s
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="n">data</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span></pre></div></td><td class="code"><div><pre><span></span><code>&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
+RangeIndex: 100000 entries, 0 to 99999
+Data columns (total 3 columns):
+ #   Column     Non-Null Count   Dtype         
+---  ------     --------------   -----         
+ 0   date/time  100000 non-null  datetime64[ns]
+ 1   lat        100000 non-null  float64       
+ 2   lon        100000 non-null  float64       
+dtypes: datetime64[ns](1), float64(2)
+memory usage: 2.3 MB
+</code></pre></div></td></tr></table></div>
+<p>Feel free to reference the <code>read_csv</code> <a href="https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html">documentation</a>, the focus of this post is on the <code>nrows=100000</code> argument though.</p>
+<p>This <code>nrows</code> is used to limit the number of rows that get loaded into our application.
+Taking in <code>100,000</code> rows landed us around <code>2.3 MB</code> of memory allocation for the data.</p>
+<p>It loaded on my computer in <code>~3</code> seconds.</p>
+<p>Let's see how that would go without our <code>nrows</code> limitation</p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-3-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-3-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-3-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-3-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-3-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-3-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-3-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-3-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-3-10">10</a></span>
+<span class="normal"><a href="#__codelineno-3-11">11</a></span>
+<span class="normal"><a href="#__codelineno-3-12">12</a></span>
+<span class="normal"><a href="#__codelineno-3-13">13</a></span>
+<span class="normal"><a href="#__codelineno-3-14">14</a></span>
+<span class="normal"><a href="#__codelineno-3-15">15</a></span>
+<span class="normal"><a href="#__codelineno-3-16">16</a></span>
+<span class="normal"><a href="#__codelineno-3-17">17</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="k">def</span> <span class="nf">load_full_data</span><span class="p">():</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2"></a>    <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3"></a>        <span class="s2">&quot;uber-raw-data-sep14.csv.gz&quot;</span><span class="p">,</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4"></a>        <span class="c1"># nrows=100000,  # approx. 10% of data</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5"></a>        <span class="n">names</span><span class="o">=</span><span class="p">[</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6"></a>            <span class="s2">&quot;date/time&quot;</span><span class="p">,</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7"></a>            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8"></a>            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9"></a>        <span class="p">],</span>  <span class="c1"># specify names directly since they don&#39;t change</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10"></a>        <span class="n">skiprows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># don&#39;t read header since names specified directly</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11"></a>        <span class="n">usecols</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>  <span class="c1"># doesn&#39;t load last column, constant value &quot;B02512&quot;</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12"></a>        <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13"></a>            <span class="s2">&quot;date/time&quot;</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14"></a>        <span class="p">],</span>  <span class="c1"># set as datetime instead of converting after the fact</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15"></a>    <span class="p">)</span>
+<a id="__codelineno-3-16" name="__codelineno-3-16"></a>
+<a id="__codelineno-3-17" name="__codelineno-3-17"></a>    <span class="k">return</span> <span class="n">data</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1">1</a></span>
+<span class="normal"><a href="#__codelineno-4-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a><span class="o">%%</span><span class="n">time</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2"></a><span class="n">full_data</span> <span class="o">=</span> <span class="n">load_full_data</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code>CPU times: user 29.8 s, sys: 163 ms, total: 30 s
+Wall time: 30 s
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1"></a><span class="n">full_data</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span></pre></div></td><td class="code"><div><pre><span></span><code>&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
+RangeIndex: 1028136 entries, 0 to 1028135
+Data columns (total 3 columns):
+ #   Column     Non-Null Count    Dtype         
+---  ------     --------------    -----         
+ 0   date/time  1028136 non-null  datetime64[ns]
+ 1   lat        1028136 non-null  float64       
+ 2   lon        1028136 non-null  float64       
+dtypes: datetime64[ns](1), float64(2)
+memory usage: 23.5 MB
+</code></pre></div></td></tr></table></div>
+<p>Ok, so with <code>~10</code> times as much data (<code>1,028,136</code> vs <code>100,000</code>) we use:</p>
+<ul>
+<li><code>~10</code> times as much memory (<code>23.5 MB</code> vs <code>2.3 MB</code>)</li>
+<li><code>~10</code> times as much time (<code>30 s</code> vs <code>2.94 s</code>)</li>
+</ul>
+<p>The first time this app loads in <code>streamlit</code> will be a bit slow either way, but the <code>singleton</code> decorator is designed to prevent having to re-compute objects like this.</p>
+<p>(Also note that this is a single month of data... a year might include <code>~12,337,632</code> entries based on this september 2014 data)</p>
+<h2 id="enter-the-duck">Enter the Duck<a class="headerlink" href="#enter-the-duck" title="Permanent link">🔗</a></h2>
+<p>Using <code>pyarrow</code> and <code>duckdb</code> let's see if we get any improvement</p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-6-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-6-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-6-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-6-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-6-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-6-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-6-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-6-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-6-10">10</a></span>
+<span class="normal"><a href="#__codelineno-6-11">11</a></span>
+<span class="normal"><a href="#__codelineno-6-12">12</a></span>
+<span class="normal"><a href="#__codelineno-6-13">13</a></span>
+<span class="normal"><a href="#__codelineno-6-14">14</a></span>
+<span class="normal"><a href="#__codelineno-6-15">15</a></span>
+<span class="normal"><a href="#__codelineno-6-16">16</a></span>
+<span class="normal"><a href="#__codelineno-6-17">17</a></span>
+<span class="normal"><a href="#__codelineno-6-18">18</a></span>
+<span class="normal"><a href="#__codelineno-6-19">19</a></span>
+<span class="normal"><a href="#__codelineno-6-20">20</a></span>
+<span class="normal"><a href="#__codelineno-6-21">21</a></span>
+<span class="normal"><a href="#__codelineno-6-22">22</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1"></a><span class="kn">import</span> <span class="nn">duckdb</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2"></a><span class="kn">import</span> <span class="nn">pyarrow</span> <span class="k">as</span> <span class="nn">pa</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3"></a><span class="kn">from</span> <span class="nn">pyarrow</span> <span class="kn">import</span> <span class="n">csv</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4"></a><span class="kn">import</span> <span class="nn">pyarrow.dataset</span> <span class="k">as</span> <span class="nn">ds</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5"></a>
+<a id="__codelineno-6-6" name="__codelineno-6-6"></a><span class="k">def</span> <span class="nf">load_data_duckdb</span><span class="p">():</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7"></a>    <span class="n">data</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;uber-raw-data-sep14.csv.gz&#39;</span><span class="p">,</span> <span class="n">convert_options</span><span class="o">=</span><span class="n">csv</span><span class="o">.</span><span class="n">ConvertOptions</span><span class="p">(</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8"></a>        <span class="n">include_columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Date/Time&quot;</span><span class="p">,</span><span class="s2">&quot;Lat&quot;</span><span class="p">,</span><span class="s2">&quot;Lon&quot;</span><span class="p">],</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9"></a>        <span class="n">timestamp_parsers</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;%m/</span><span class="si">%d</span><span class="s1">/%Y %H:%M:%S&#39;</span><span class="p">]</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10"></a>    <span class="p">))</span><span class="o">.</span><span class="n">rename_columns</span><span class="p">([</span><span class="s1">&#39;date/time&#39;</span><span class="p">,</span> <span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">])</span>
+<a id="__codelineno-6-11" name="__codelineno-6-11"></a>
+<a id="__codelineno-6-12" name="__codelineno-6-12"></a>    <span class="c1"># `dataset` is for partitioning larger datasets. Can&#39;t include timestamp parsing directly though</span>
+<a id="__codelineno-6-13" name="__codelineno-6-13"></a>    <span class="c1"># data = ds.dataset(&quot;uber-raw-data-sep14.csv.gz&quot;, schema=pa.schema([</span>
+<a id="__codelineno-6-14" name="__codelineno-6-14"></a>    <span class="c1">#     (&quot;Date/Time&quot;, pa.timestamp(&#39;s&#39;)),</span>
+<a id="__codelineno-6-15" name="__codelineno-6-15"></a>    <span class="c1">#     (&#39;Lat&#39;, pa.float32()),</span>
+<a id="__codelineno-6-16" name="__codelineno-6-16"></a>    <span class="c1">#     (&#39;Lon&#39;, pa.float32())</span>
+<a id="__codelineno-6-17" name="__codelineno-6-17"></a>    <span class="c1"># ]), format=&#39;csv&#39;)</span>
+<a id="__codelineno-6-18" name="__codelineno-6-18"></a>
+<a id="__codelineno-6-19" name="__codelineno-6-19"></a>    <span class="c1"># DuckDB can query Arrow tables, so we&#39;ll just return the table and a connection for flexible querying</span>
+<a id="__codelineno-6-20" name="__codelineno-6-20"></a>    <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">duckdb</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;:memory:&quot;</span><span class="p">)</span>
+<a id="__codelineno-6-21" name="__codelineno-6-21"></a><span class="n">arrow_data</span><span class="p">,</span> <span class="n">con</span> <span class="o">=</span> <span class="n">load_data_duckdb</span><span class="p">()</span>
+<a id="__codelineno-6-22" name="__codelineno-6-22"></a><span class="n">arrow_data</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span></pre></div></td><td class="code"><div><pre><span></span><code>pyarrow.Table
+date/time: timestamp[s]
+lat: double
+lon: double
+----
+date/time: [[2014-09-01 00:01:00,2014-09-01 00:01:00,2014-09-01 00:03:00,2014-09-01 00:06:00,2014-09-01 00:11:00]]
+lat: [[40.2201,40.75,40.7559,40.745,40.8145]]
+lon: [[-74.0021,-74.0027,-73.9864,-73.9889,-73.9444]]
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1">1</a></span>
+<span class="normal"><a href="#__codelineno-7-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1"></a><span class="o">%%</span><span class="n">timeit</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2"></a><span class="n">load_data_duckdb</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>153 ms ± 121 µs per loop (mean ± std. dev. of 7 runs, 10 loops each)
+</code></pre></div></td></tr></table></div>
+<p>Holy Smokes! Well that was fast and fun!</p>
+<p><code>pyarrow</code> read the whole dataset in <code>153 ms</code>.
+That's <code>0.153 s</code> compared to <code>30 s</code> with <code>pandas</code>!</p>
+<p>So how much memory are <code>pyarrow</code> and <code>duckdb</code> using?</p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-8-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-8-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-8-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-8-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-8-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-8-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-8-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-8-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-8-10">10</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1"></a><span class="k">def</span> <span class="nf">format_bytes</span><span class="p">(</span><span class="n">size</span><span class="p">):</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;from https://stackoverflow.com/a/49361727/15685218&quot;&quot;&quot;</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3"></a>    <span class="c1"># 2**10 = 1024</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4"></a>    <span class="n">power</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="mi">10</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5"></a>    <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
+<a id="__codelineno-8-6" name="__codelineno-8-6"></a>    <span class="n">power_labels</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span> <span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;kilo&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s1">&#39;mega&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="s1">&#39;giga&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span> <span class="s1">&#39;tera&#39;</span><span class="p">}</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7"></a>    <span class="k">while</span> <span class="n">size</span> <span class="o">&gt;</span> <span class="n">power</span><span class="p">:</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8"></a>        <span class="n">size</span> <span class="o">/=</span> <span class="n">power</span>
+<a id="__codelineno-8-9" name="__codelineno-8-9"></a>        <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
+<a id="__codelineno-8-10" name="__codelineno-8-10"></a>    <span class="k">return</span> <span class="n">size</span><span class="p">,</span> <span class="n">power_labels</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;bytes&#39;</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-9-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1"></a><span class="n">format_bytes</span><span class="p">(</span><span class="n">arrow_data</span><span class="o">.</span><span class="n">nbytes</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>(23.53216552734375, &#39;megabytes&#39;)
+</code></pre></div></td></tr></table></div>
+<p>Ok, the <code>pyarrow</code> table has roughly the same size as the full <code>pandas</code> Dataframe</p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-10-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-10-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-10-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-10-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-10-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-10-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-10-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-10-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-10-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-10-10">10</a></span>
+<span class="normal"><a href="#__codelineno-10-11">11</a></span>
+<span class="normal"><a href="#__codelineno-10-12">12</a></span>
+<span class="normal"><a href="#__codelineno-10-13">13</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1"></a><span class="n">con</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;PRAGMA database_size;&#39;</span><span class="p">)</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2"></a><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3"></a><span class="sd">database_size VARCHAR, -- total block count times the block size</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4"></a><span class="sd">block_size BIGINT,     -- database block size</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5"></a><span class="sd">total_blocks BIGINT,   -- total blocks in the database</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6"></a><span class="sd">used_blocks BIGINT,    -- used blocks in the database</span>
+<a id="__codelineno-10-7" name="__codelineno-10-7"></a><span class="sd">free_blocks BIGINT,    -- free blocks in the database</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8"></a><span class="sd">wal_size VARCHAR,      -- write ahead log size</span>
+<a id="__codelineno-10-9" name="__codelineno-10-9"></a><span class="sd">memory_usage VARCHAR,  -- memory used by the database buffer manager</span>
+<a id="__codelineno-10-10" name="__codelineno-10-10"></a><span class="sd">memory_limit VARCHAR   -- maximum memory allowed for the database</span>
+<a id="__codelineno-10-11" name="__codelineno-10-11"></a><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-10-12" name="__codelineno-10-12"></a><span class="n">database_size</span><span class="p">,</span> <span class="n">block_size</span><span class="p">,</span> <span class="n">total_blocks</span><span class="p">,</span> <span class="n">used_blocks</span><span class="p">,</span> <span class="n">free_blocks</span><span class="p">,</span> <span class="n">wal_size</span><span class="p">,</span> <span class="n">memory_usage</span><span class="p">,</span> <span class="n">memory_limit</span> <span class="o">=</span> <span class="n">con</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+<a id="__codelineno-10-13" name="__codelineno-10-13"></a><span class="n">memory_usage</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>&#39;0 bytes&#39;
+</code></pre></div></td></tr></table></div>
+<p>We haven't told <code>duckdb</code> to load anything into its own tables, so it still has no memory usage.
+Nevertheless, <code>duckdb</code> can query the <code>arrow_data</code> since it's a <code>pyarrow</code> table.
+(<code>duckdb</code> can also load directly <a href="https://duckdb.org/docs/data/csv">from csv</a>).</p>
+<p>So where does that leave us on loading the full <code>1,000,000</code> row dataset?</p>
+<ul>
+<li><code>pandas</code>: <code>~30 s</code> of time and <code>23.5 MB</code></li>
+<li><code>pyarrow</code>: <code>~.1 s</code> of time (<code>153 ms</code>) and <code>23.9 MB</code></li>
+</ul>
+<p>In fairness, I tried <code>pandas</code> with the <code>pyarrow</code> engine.
+At the time of writing I can't find a fast datetime parse and <code>usecols</code> throws an error in <code>pyarrow</code> (see end of post).
+Reading the full CSV without datetime parsing is in line in terms of speed though.</p>
+<p>(also see why the best CSV <a href="https://pythonspeed.com/articles/pandas-read-csv-fast/">is not a CSV at all</a> for more on this path)</p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-11-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-11-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-11-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-11-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-11-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-11-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-11-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-11-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-11-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-11-10">10</a></span>
+<span class="normal"><a href="#__codelineno-11-11">11</a></span>
+<span class="normal"><a href="#__codelineno-11-12">12</a></span>
+<span class="normal"><a href="#__codelineno-11-13">13</a></span>
+<span class="normal"><a href="#__codelineno-11-14">14</a></span>
+<span class="normal"><a href="#__codelineno-11-15">15</a></span>
+<span class="normal"><a href="#__codelineno-11-16">16</a></span>
+<span class="normal"><a href="#__codelineno-11-17">17</a></span>
+<span class="normal"><a href="#__codelineno-11-18">18</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1"></a><span class="o">%%</span><span class="n">time</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2"></a><span class="n">arrow_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3"></a>    <span class="s2">&quot;uber-raw-data-sep14.csv.gz&quot;</span><span class="p">,</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4"></a>    <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;pyarrow&#39;</span><span class="p">,</span>
+<a id="__codelineno-11-5" name="__codelineno-11-5"></a>    <span class="n">names</span><span class="o">=</span><span class="p">[</span>
+<a id="__codelineno-11-6" name="__codelineno-11-6"></a>        <span class="s2">&quot;date/time&quot;</span><span class="p">,</span>
+<a id="__codelineno-11-7" name="__codelineno-11-7"></a>        <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+<a id="__codelineno-11-8" name="__codelineno-11-8"></a>        <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+<a id="__codelineno-11-9" name="__codelineno-11-9"></a>        <span class="s2">&quot;CONST&quot;</span>
+<a id="__codelineno-11-10" name="__codelineno-11-10"></a>    <span class="p">],</span>  <span class="c1"># specify names directly since they don&#39;t change</span>
+<a id="__codelineno-11-11" name="__codelineno-11-11"></a>    <span class="n">skiprows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># don&#39;t read header since names specified directly</span>
+<a id="__codelineno-11-12" name="__codelineno-11-12"></a>    <span class="c1"># usecols=[1, 2],  # doesn&#39;t load last column, constant value &quot;B02512&quot;</span>
+<a id="__codelineno-11-13" name="__codelineno-11-13"></a>    <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span>
+<a id="__codelineno-11-14" name="__codelineno-11-14"></a>        <span class="s2">&quot;date/time&quot;</span>
+<a id="__codelineno-11-15" name="__codelineno-11-15"></a>    <span class="p">],</span>  <span class="c1"># set as datetime instead of converting after the fact</span>
+<a id="__codelineno-11-16" name="__codelineno-11-16"></a>    <span class="c1"># infer_datetime_format=True  # Unsupported for pyarrow</span>
+<a id="__codelineno-11-17" name="__codelineno-11-17"></a>    <span class="n">date_parser</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<a id="__codelineno-11-18" name="__codelineno-11-18"></a><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code>CPU times: user 30.2 s, sys: 193 ms, total: 30.4 s
+Wall time: 30.2 s
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-12-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1"></a><span class="n">arrow_df</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span></pre></div></td><td class="code"><div><pre><span></span><code>&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
+RangeIndex: 1028136 entries, 0 to 1028135
+Data columns (total 4 columns):
+ #   Column     Non-Null Count    Dtype         
+---  ------     --------------    -----         
+ 0   date/time  1028136 non-null  datetime64[ns]
+ 1   lat        1028136 non-null  float64       
+ 2   lon        1028136 non-null  float64       
+ 3   CONST      1028136 non-null  object        
+dtypes: datetime64[ns](1), float64(2), object(1)
+memory usage: 31.4+ MB
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-13-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-13-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-13-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-13-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-13-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-13-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-13-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-13-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-13-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-13-10">10</a></span>
+<span class="normal"><a href="#__codelineno-13-11">11</a></span>
+<span class="normal"><a href="#__codelineno-13-12">12</a></span>
+<span class="normal"><a href="#__codelineno-13-13">13</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1"></a><span class="o">%%</span><span class="n">timeit</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2"></a><span class="n">arrow_df_no_datetime</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3"></a>    <span class="s2">&quot;uber-raw-data-sep14.csv.gz&quot;</span><span class="p">,</span>
+<a id="__codelineno-13-4" name="__codelineno-13-4"></a>    <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;pyarrow&#39;</span><span class="p">,</span>
+<a id="__codelineno-13-5" name="__codelineno-13-5"></a>    <span class="n">names</span><span class="o">=</span><span class="p">[</span>
+<a id="__codelineno-13-6" name="__codelineno-13-6"></a>        <span class="s2">&quot;date/time&quot;</span><span class="p">,</span>
+<a id="__codelineno-13-7" name="__codelineno-13-7"></a>        <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+<a id="__codelineno-13-8" name="__codelineno-13-8"></a>        <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+<a id="__codelineno-13-9" name="__codelineno-13-9"></a>        <span class="s2">&quot;CONST&quot;</span>
+<a id="__codelineno-13-10" name="__codelineno-13-10"></a>    <span class="p">],</span>  <span class="c1"># specify names directly since they don&#39;t change</span>
+<a id="__codelineno-13-11" name="__codelineno-13-11"></a>    <span class="n">skiprows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># don&#39;t read header since names specified directly</span>
+<a id="__codelineno-13-12" name="__codelineno-13-12"></a>    <span class="c1"># usecols=[1, 2],  # doesn&#39;t load last column, constant value &quot;B02512&quot;</span>
+<a id="__codelineno-13-13" name="__codelineno-13-13"></a><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>139 ms ± 568 µs per loop (mean ± std. dev. of 7 runs, 10 loops each)
+</code></pre></div></td></tr></table></div>
+<h2 id="filtration">Filtration<a class="headerlink" href="#filtration" title="Permanent link">🔗</a></h2>
+<p>We have 3 main analysis functions to compare between <code>pandas</code> and <code>duckdb</code> for this app, laid out below:</p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-14-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-14-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-14-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-14-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-14-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-14-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-14-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-14-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-14-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-14-10">10</a></span>
+<span class="normal"><a href="#__codelineno-14-11">11</a></span>
+<span class="normal"><a href="#__codelineno-14-12">12</a></span>
+<span class="normal"><a href="#__codelineno-14-13">13</a></span>
+<span class="normal"><a href="#__codelineno-14-14">14</a></span>
+<span class="normal"><a href="#__codelineno-14-15">15</a></span>
+<span class="normal"><a href="#__codelineno-14-16">16</a></span>
+<span class="normal"><a href="#__codelineno-14-17">17</a></span>
+<span class="normal"><a href="#__codelineno-14-18">18</a></span>
+<span class="normal"><a href="#__codelineno-14-19">19</a></span>
+<span class="normal"><a href="#__codelineno-14-20">20</a></span>
+<span class="normal"><a href="#__codelineno-14-21">21</a></span>
+<span class="normal"><a href="#__codelineno-14-22">22</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1"></a><span class="c1"># FILTER DATA FOR A SPECIFIC HOUR, CACHE</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2"></a><span class="c1"># @st.experimental_memo</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3"></a><span class="k">def</span> <span class="nf">filterdata</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">hour_selected</span><span class="p">):</span>
+<a id="__codelineno-14-4" name="__codelineno-14-4"></a>    <span class="k">return</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;date/time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">hour</span> <span class="o">==</span> <span class="n">hour_selected</span><span class="p">]</span>
+<a id="__codelineno-14-5" name="__codelineno-14-5"></a>
+<a id="__codelineno-14-6" name="__codelineno-14-6"></a>
+<a id="__codelineno-14-7" name="__codelineno-14-7"></a><span class="c1"># CALCULATE MIDPOINT FOR GIVEN SET OF DATA</span>
+<a id="__codelineno-14-8" name="__codelineno-14-8"></a><span class="c1"># @st.experimental_memo</span>
+<a id="__codelineno-14-9" name="__codelineno-14-9"></a><span class="k">def</span> <span class="nf">mpoint</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">):</span>
+<a id="__codelineno-14-10" name="__codelineno-14-10"></a>    <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">lat</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">lon</span><span class="p">))</span>
+<a id="__codelineno-14-11" name="__codelineno-14-11"></a>
+<a id="__codelineno-14-12" name="__codelineno-14-12"></a>
+<a id="__codelineno-14-13" name="__codelineno-14-13"></a><span class="c1"># FILTER DATA BY HOUR</span>
+<a id="__codelineno-14-14" name="__codelineno-14-14"></a><span class="c1"># @st.experimental_memo</span>
+<a id="__codelineno-14-15" name="__codelineno-14-15"></a><span class="k">def</span> <span class="nf">histdata</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">hr</span><span class="p">):</span>
+<a id="__codelineno-14-16" name="__codelineno-14-16"></a>    <span class="n">filtered</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span>
+<a id="__codelineno-14-17" name="__codelineno-14-17"></a>        <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;date/time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">hour</span> <span class="o">&gt;=</span> <span class="n">hr</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;date/time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">hour</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">hr</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+<a id="__codelineno-14-18" name="__codelineno-14-18"></a>    <span class="p">]</span>
+<a id="__codelineno-14-19" name="__codelineno-14-19"></a>
+<a id="__codelineno-14-20" name="__codelineno-14-20"></a>    <span class="n">hist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">filtered</span><span class="p">[</span><span class="s2">&quot;date/time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">minute</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">60</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+<a id="__codelineno-14-21" name="__codelineno-14-21"></a>
+<a id="__codelineno-14-22" name="__codelineno-14-22"></a>    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;minute&quot;</span><span class="p">:</span> <span class="nb">range</span><span class="p">(</span><span class="mi">60</span><span class="p">),</span> <span class="s2">&quot;pickups&quot;</span><span class="p">:</span> <span class="n">hist</span><span class="p">})</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-15-1">1</a></span>
+<span class="normal"><a href="#__codelineno-15-2">2</a></span>
+<span class="normal"><a href="#__codelineno-15-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1"></a><span class="o">%%</span><span class="n">timeit</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2"></a><span class="c1"># For fairness, we&#39;ll use the full dataframe</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3"></a><span class="n">filterdata</span><span class="p">(</span><span class="n">full_data</span><span class="p">,</span> <span class="mi">14</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>18 ms ± 65.4 µs per loop (mean ± std. dev. of 7 runs, 100 loops each)
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-16-1">1</a></span>
+<span class="normal"><a href="#__codelineno-16-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1"></a><span class="o">%%</span><span class="n">timeit</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2"></a><span class="n">mpoint</span><span class="p">(</span><span class="n">full_data</span><span class="p">[</span><span class="s2">&quot;lat&quot;</span><span class="p">],</span> <span class="n">full_data</span><span class="p">[</span><span class="s2">&quot;lon&quot;</span><span class="p">])</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>404 µs ± 1.65 µs per loop (mean ± std. dev. of 7 runs, 1,000 loops each)
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-17-1">1</a></span>
+<span class="normal"><a href="#__codelineno-17-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1"></a><span class="o">%%</span><span class="n">timeit</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2"></a><span class="n">histdata</span><span class="p">(</span><span class="n">full_data</span><span class="p">,</span> <span class="mi">14</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code>/var/folders/cp/ktx4zddx7q3bqctqfjykn5700000gn/T/ipykernel_302/2026438809.py:16: UserWarning: Boolean Series key will be reindexed to match DataFrame index.
+  filtered = data[
+
+
+39.9 ms ± 111 µs per loop (mean ± std. dev. of 7 runs, 10 loops each)
+</code></pre></div></td></tr></table></div>
+<p>How about Duckdb (with conversion back to <code>pandas</code> for fairness)</p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-18-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-18-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-18-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-18-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-18-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-18-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-18-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-18-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-18-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-18-10">10</a></span>
+<span class="normal"><a href="#__codelineno-18-11">11</a></span>
+<span class="normal"><a href="#__codelineno-18-12">12</a></span>
+<span class="normal"><a href="#__codelineno-18-13">13</a></span>
+<span class="normal"><a href="#__codelineno-18-14">14</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1"></a><span class="k">def</span> <span class="nf">duck_filterdata</span><span class="p">(</span><span class="n">con</span><span class="p">,</span> <span class="n">hour_selected</span><span class="p">):</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2"></a>    <span class="k">return</span> <span class="n">con</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+<a id="__codelineno-18-3" name="__codelineno-18-3"></a>        <span class="sa">f</span><span class="s1">&#39;SELECT &quot;date/time&quot;, lat, lon FROM arrow_data WHERE hour(&quot;date/time&quot;) = </span><span class="si">{</span><span class="n">hour_selected</span><span class="si">}</span><span class="s1">&#39;</span>
+<a id="__codelineno-18-4" name="__codelineno-18-4"></a>    <span class="p">)</span><span class="o">.</span><span class="n">to_df</span><span class="p">()</span>
+<a id="__codelineno-18-5" name="__codelineno-18-5"></a>
+<a id="__codelineno-18-6" name="__codelineno-18-6"></a>
+<a id="__codelineno-18-7" name="__codelineno-18-7"></a><span class="k">def</span> <span class="nf">duck_mpoint</span><span class="p">(</span><span class="n">con</span><span class="p">):</span>
+<a id="__codelineno-18-8" name="__codelineno-18-8"></a>    <span class="k">return</span> <span class="n">con</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;SELECT AVG(lat), AVG(lon) FROM arrow_data&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+<a id="__codelineno-18-9" name="__codelineno-18-9"></a>
+<a id="__codelineno-18-10" name="__codelineno-18-10"></a>
+<a id="__codelineno-18-11" name="__codelineno-18-11"></a><span class="k">def</span> <span class="nf">duck_histdata</span><span class="p">(</span><span class="n">con</span><span class="p">,</span> <span class="n">hr</span><span class="p">):</span>
+<a id="__codelineno-18-12" name="__codelineno-18-12"></a>    <span class="n">hist_query</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;SELECT histogram(minute(&quot;date/time&quot;)) FROM arrow_data WHERE hour(&quot;date/time&quot;) &gt;= </span><span class="si">{</span><span class="n">hr</span><span class="si">}</span><span class="s1"> and hour(&quot;date/time&quot;) &lt; </span><span class="si">{</span><span class="n">hr</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span>
+<a id="__codelineno-18-13" name="__codelineno-18-13"></a>    <span class="n">results</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">con</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">hist_query</span><span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+<a id="__codelineno-18-14" name="__codelineno-18-14"></a>    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-19-1">1</a></span>
+<span class="normal"><a href="#__codelineno-19-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1"></a><span class="o">%%</span><span class="n">timeit</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2"></a><span class="n">duck_filterdata</span><span class="p">(</span><span class="n">con</span><span class="p">,</span> <span class="mi">14</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>6.03 ms ± 10.9 µs per loop (mean ± std. dev. of 7 runs, 100 loops each)
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-20-1">1</a></span>
+<span class="normal"><a href="#__codelineno-20-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1"></a><span class="o">%%</span><span class="n">timeit</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2"></a><span class="n">duck_mpoint</span><span class="p">(</span><span class="n">con</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>1.62 ms ± 16.6 µs per loop (mean ± std. dev. of 7 runs, 1,000 loops each)
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-21-1">1</a></span>
+<span class="normal"><a href="#__codelineno-21-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1"></a><span class="o">%%</span><span class="n">timeit</span>
+<a id="__codelineno-21-2" name="__codelineno-21-2"></a><span class="n">duck_histdata</span><span class="p">(</span><span class="n">con</span><span class="p">,</span> <span class="mi">14</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>2.86 ms ± 19.5 µs per loop (mean ± std. dev. of 7 runs, 100 loops each)
+</code></pre></div></td></tr></table></div>
+<p>We got a modest improvement in <code>filterdata</code> and more than 10x speedup in <code>histdata</code>, but actually lost out to <code>numpy</code> for finding the average of 2 arrays in <code>mpoint</code>!</p>
+<ul>
+<li><code>filterdata</code>:</li>
+<li><code>pandas</code>: 18 ms ± 65.4 µs</li>
+<li><code>duckdb</code>: 6.03 ms ± 10.9 µs</li>
+<li><code>mpoint</code>:</li>
+<li><code>numpy</code>: 404 µs ± 1.65 µs</li>
+<li><code>duckdb</code>: 1.62 ms ± 16.6 µs</li>
+<li><code>histdata</code>:</li>
+<li><code>pandas</code> + <code>numpy</code>: 39.9 ms ± 111 µs</li>
+<li><code>duckdb</code>: 2.86 ms ± 19.5 µs</li>
+</ul>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-22-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1"></a><span class="mi">18</span> <span class="o">/</span> <span class="mf">6.03</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>2.9850746268656714
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-23-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1"></a><span class="mi">404</span> <span class="o">/</span> <span class="mi">1620</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>0.24938271604938272
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-24-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1"></a><span class="mf">39.9</span> <span class="o">/</span> <span class="mf">2.86</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>13.951048951048952
+</code></pre></div></td></tr></table></div>
+<h2 id="larger-than-memory-data">Larger Than Memory Data<a class="headerlink" href="#larger-than-memory-data" title="Permanent link">🔗</a></h2>
+<p>Where this DuckDB + Arrow combo really shines is analyzing data that can't be handled by Pandas on your machine.</p>
+<p>In many cases if the data doesn't fit in your computer's memory (RAM) then using Pandas will consume disk (Swap) to try and fit it, which will slow things down.</p>
+<p>With the 10 Year dataset below the DuckDB authors found Pandas used <code>248 GBs</code> (!!!) of memory to read out <code>~300,000</code> rows from the <code>~1,500,000,000</code>.
+In this case it just crashes most laptops.</p>
+<p>So there evolved libraries such as Dask for handling these out-of-core situations through multiprocessing and distributed computing.
+Pandas has a whole list of <a href="https://pandas.pydata.org/pandas-docs/stable/ecosystem.html#ecosystem-out-of-core">related ecosystem projects</a>.</p>
+<p>To cut through data on a single laptop, DuckDB + Arrow + the Parquet format provide some impressive optimizations to where we don't need those <code>248 GBs</code> on any number of machines.</p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-25-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-25-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-25-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-25-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-25-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-25-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-25-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-25-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-25-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-25-10">10</a></span>
+<span class="normal"><a href="#__codelineno-25-11">11</a></span>
+<span class="normal"><a href="#__codelineno-25-12">12</a></span>
+<span class="normal"><a href="#__codelineno-25-13">13</a></span>
+<span class="normal"><a href="#__codelineno-25-14">14</a></span>
+<span class="normal"><a href="#__codelineno-25-15">15</a></span>
+<span class="normal"><a href="#__codelineno-25-16">16</a></span>
+<span class="normal"><a href="#__codelineno-25-17">17</a></span>
+<span class="normal"><a href="#__codelineno-25-18">18</a></span>
+<span class="normal"><a href="#__codelineno-25-19">19</a></span>
+<span class="normal"><a href="#__codelineno-25-20">20</a></span>
+<span class="normal"><a href="#__codelineno-25-21">21</a></span>
+<span class="normal"><a href="#__codelineno-25-22">22</a></span>
+<span class="normal"><a href="#__codelineno-25-23">23</a></span>
+<span class="normal"><a href="#__codelineno-25-24">24</a></span>
+<span class="normal"><a href="#__codelineno-25-25">25</a></span>
+<span class="normal"><a href="#__codelineno-25-26">26</a></span>
+<span class="normal"><a href="#__codelineno-25-27">27</a></span>
+<span class="normal"><a href="#__codelineno-25-28">28</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1"></a><span class="k">def</span> <span class="nf">load_from_10_year</span><span class="p">():</span>
+<a id="__codelineno-25-2" name="__codelineno-25-2"></a>    <span class="n">nyc</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">dataset</span><span class="p">(</span><span class="s2">&quot;nyc-taxi/&quot;</span><span class="p">,</span> <span class="n">partitioning</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">,</span> <span class="s2">&quot;month&quot;</span><span class="p">])</span>
+<a id="__codelineno-25-3" name="__codelineno-25-3"></a>    <span class="c1"># Get database connection</span>
+<a id="__codelineno-25-4" name="__codelineno-25-4"></a>    <span class="n">con</span> <span class="o">=</span> <span class="n">duckdb</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<a id="__codelineno-25-5" name="__codelineno-25-5"></a>
+<a id="__codelineno-25-6" name="__codelineno-25-6"></a>    <span class="c1"># Run query that selects part of the data</span>
+<a id="__codelineno-25-7" name="__codelineno-25-7"></a>    <span class="n">query</span> <span class="o">=</span> <span class="n">con</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+<a id="__codelineno-25-8" name="__codelineno-25-8"></a>        <span class="sa">f</span><span class="s2">&quot;SELECT total_amount, passenger_count,year FROM nyc where total_amount &gt; 100 and year &gt; 2014&quot;</span>
+<a id="__codelineno-25-9" name="__codelineno-25-9"></a>    <span class="p">)</span>
+<a id="__codelineno-25-10" name="__codelineno-25-10"></a>
+<a id="__codelineno-25-11" name="__codelineno-25-11"></a>    <span class="c1"># Create Record Batch Reader from Query Result.</span>
+<a id="__codelineno-25-12" name="__codelineno-25-12"></a>    <span class="c1"># &quot;fetch_record_batch()&quot; also accepts an extra parameter related to the desired produced chunk size.</span>
+<a id="__codelineno-25-13" name="__codelineno-25-13"></a>    <span class="n">record_batch_reader</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">fetch_record_batch</span><span class="p">()</span>
+<a id="__codelineno-25-14" name="__codelineno-25-14"></a>
+<a id="__codelineno-25-15" name="__codelineno-25-15"></a>    <span class="c1"># Retrieve all batch chunks</span>
+<a id="__codelineno-25-16" name="__codelineno-25-16"></a>    <span class="n">all_chunks</span> <span class="o">=</span> <span class="p">[]</span>
+<a id="__codelineno-25-17" name="__codelineno-25-17"></a>    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+<a id="__codelineno-25-18" name="__codelineno-25-18"></a>        <span class="k">try</span><span class="p">:</span>
+<a id="__codelineno-25-19" name="__codelineno-25-19"></a>            <span class="c1"># Process a single chunk here</span>
+<a id="__codelineno-25-20" name="__codelineno-25-20"></a>            <span class="c1"># pyarrow.lib.RecordBatch</span>
+<a id="__codelineno-25-21" name="__codelineno-25-21"></a>            <span class="n">chunk</span> <span class="o">=</span> <span class="n">record_batch_reader</span><span class="o">.</span><span class="n">read_next_batch</span><span class="p">()</span>
+<a id="__codelineno-25-22" name="__codelineno-25-22"></a>            <span class="n">all_chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+<a id="__codelineno-25-23" name="__codelineno-25-23"></a>        <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+<a id="__codelineno-25-24" name="__codelineno-25-24"></a>            <span class="k">break</span>
+<a id="__codelineno-25-25" name="__codelineno-25-25"></a>    <span class="n">data</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">Table</span><span class="o">.</span><span class="n">from_batches</span><span class="p">(</span><span class="n">all_chunks</span><span class="p">)</span>
+<a id="__codelineno-25-26" name="__codelineno-25-26"></a>    <span class="k">return</span> <span class="n">data</span>
+<a id="__codelineno-25-27" name="__codelineno-25-27"></a>
+<a id="__codelineno-25-28" name="__codelineno-25-28"></a><span class="n">load_from_10_year</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span></pre></div></td><td class="code"><div><pre><span></span><code>pyarrow.Table
+total_amount: float
+passenger_count: int8
+year: int32
+----
+total_amount: [[149.3,132.18,205.05,137.55,106.57,107.3,187.85,145.55,230.3,118.3,...,104.42,110.8,102.04,112.56,209.9,103.41,175.8,144.95,241.92,102.8]]
+passenger_count: [[1,1,1,1,1,2,1,4,2,1,...,5,1,1,8,2,2,1,1,3,2]]
+year: [[2015,2015,2015,2015,2015,2015,2015,2015,2015,2015,...,2019,2019,2019,2019,2019,2019,2019,2019,2019,2019]]
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-26-1">1</a></span>
+<span class="normal"><a href="#__codelineno-26-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1"></a><span class="o">%%</span><span class="n">timeit</span>
+<a id="__codelineno-26-2" name="__codelineno-26-2"></a><span class="n">load_from_10_year</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>2.4 s ± 127 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
+</code></pre></div></td></tr></table></div>
+<p>Less than 3 seconds to sift through 1.5 Billion rows of data...</p>
+<p>Let's look at how long it takes to iterate over the whole set in chunks (the inefficient solution to most out-of-memory issues)</p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-27-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-27-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-27-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-27-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-27-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-27-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-27-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-27-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-27-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-27-10">10</a></span>
+<span class="normal"><a href="#__codelineno-27-11">11</a></span>
+<span class="normal"><a href="#__codelineno-27-12">12</a></span>
+<span class="normal"><a href="#__codelineno-27-13">13</a></span>
+<span class="normal"><a href="#__codelineno-27-14">14</a></span>
+<span class="normal"><a href="#__codelineno-27-15">15</a></span>
+<span class="normal"><a href="#__codelineno-27-16">16</a></span>
+<span class="normal"><a href="#__codelineno-27-17">17</a></span>
+<span class="normal"><a href="#__codelineno-27-18">18</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1"></a><span class="o">%%</span><span class="n">time</span>
+<a id="__codelineno-27-2" name="__codelineno-27-2"></a><span class="n">nyc</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">dataset</span><span class="p">(</span><span class="s2">&quot;nyc-taxi/&quot;</span><span class="p">,</span> <span class="n">partitioning</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">,</span> <span class="s2">&quot;month&quot;</span><span class="p">])</span>
+<a id="__codelineno-27-3" name="__codelineno-27-3"></a><span class="c1"># Get database connection</span>
+<a id="__codelineno-27-4" name="__codelineno-27-4"></a><span class="n">con</span> <span class="o">=</span> <span class="n">duckdb</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<a id="__codelineno-27-5" name="__codelineno-27-5"></a><span class="n">query</span> <span class="o">=</span> <span class="n">con</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+<a id="__codelineno-27-6" name="__codelineno-27-6"></a>    <span class="s2">&quot;SELECT total_amount FROM nyc&quot;</span>
+<a id="__codelineno-27-7" name="__codelineno-27-7"></a><span class="p">)</span>
+<a id="__codelineno-27-8" name="__codelineno-27-8"></a>
+<a id="__codelineno-27-9" name="__codelineno-27-9"></a><span class="n">record_batch_reader</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">fetch_record_batch</span><span class="p">()</span>
+<a id="__codelineno-27-10" name="__codelineno-27-10"></a>
+<a id="__codelineno-27-11" name="__codelineno-27-11"></a><span class="n">total_rows</span> <span class="o">=</span> <span class="mi">0</span>
+<a id="__codelineno-27-12" name="__codelineno-27-12"></a><span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+<a id="__codelineno-27-13" name="__codelineno-27-13"></a>    <span class="k">try</span><span class="p">:</span>
+<a id="__codelineno-27-14" name="__codelineno-27-14"></a>        <span class="n">chunk</span> <span class="o">=</span> <span class="n">record_batch_reader</span><span class="o">.</span><span class="n">read_next_batch</span><span class="p">()</span>
+<a id="__codelineno-27-15" name="__codelineno-27-15"></a>        <span class="n">total_rows</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+<a id="__codelineno-27-16" name="__codelineno-27-16"></a>    <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+<a id="__codelineno-27-17" name="__codelineno-27-17"></a>        <span class="k">break</span>
+<a id="__codelineno-27-18" name="__codelineno-27-18"></a><span class="n">total_rows</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span></pre></div></td><td class="code"><div><pre><span></span><code>CPU times: user 1min 30s, sys: 1min 54s, total: 3min 25s
+Wall time: 3min 53s
+
+
+
+
+
+1547741381
+</code></pre></div></td></tr></table></div>
+<p>Iterating is definitely not going to work for user interactive apps.
+2 - 3 seconds is bearable for most users (with a loading indicator), but 4 minutes is far too long to be engaging.</p>
+<p>Pandas currently would need to perform this whole iteration or load the whole dataset to process the query we asked before.</p>
+<p>Download instructions (from Ursa Labs S3 bucket) and Streamlit demo using the 10 year set is available in the <a href="https://github.com/gerardrbentley/uber-nyc-pickups-duckdb">same repo</a></p>
+<h2 id="conclusions">Conclusions<a class="headerlink" href="#conclusions" title="Permanent link">🔗</a></h2>
+<p>It's no secret that Python is not a fast language, but there are tricks to speed it up.
+Common advice is to utilize C optimizations via <code>numpy</code> and <code>pandas</code>.</p>
+<p>Another new contender is utilizing the C++ driven <code>duckdb</code> as an in-process OLAP database manager.
+It takes some re-writing of Python code into SQL (or utilize the <a href="https://github.com/duckdb/duckdb/blob/master/examples/python/duckdb-python.py">Relational API</a> or another library such as <a href="https://ibis-project.org/docs/3.0.2/">Ibis Project</a>), but can play nicely with <code>pandas</code> and <code>pyarrow</code>.</p>
+<p>Speaking of Arrow 🏹, it seems to be efficient and growing in popularity and adoption.
+<code>streamlit</code> 🎈 utilizes it to simplify objects in protobufs <a href="https://blog.streamlit.io/all-in-on-apache-arrow/">between browser and server</a>.
+<code>pandas</code> 🐼 has further integrations on <a href="https://pandas.pydata.org/docs/development/roadmap.html#apache-arrow-interoperability">their roadmap</a>.
+<code>polars</code> 🐻‍❄️ uses it to power their Rust-written <a href="https://github.com/pola-rs/polars">DataFrame library</a>.</p>
+<p>This post explores an example <code>streamlit</code> app that utilizes some <code>pandas</code> and <code>numpy</code> functions such as <code>read_csv</code>, <code>average</code>, and DataFrame slicing.</p>
+<p>Using <code>pyarrow</code> to load data gives a speedup over the default <code>pandas</code> engine.
+Using <code>duckdb</code> to generate new views of data also speeds up difficult computations.</p>
+<p>It also touches on the power of this combination for processing larger than memory datasets efficiently on a single machine.</p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-28-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-28-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-28-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-28-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-28-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-28-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-28-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-28-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-28-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-28-10">10</a></span>
+<span class="normal"><a href="#__codelineno-28-11">11</a></span>
+<span class="normal"><a href="#__codelineno-28-12">12</a></span>
+<span class="normal"><a href="#__codelineno-28-13">13</a></span>
+<span class="normal"><a href="#__codelineno-28-14">14</a></span>
+<span class="normal"><a href="#__codelineno-28-15">15</a></span>
+<span class="normal"><a href="#__codelineno-28-16">16</a></span>
+<span class="normal"><a href="#__codelineno-28-17">17</a></span>
+<span class="normal"><a href="#__codelineno-28-18">18</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1"></a><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+<a id="__codelineno-28-2" name="__codelineno-28-2"></a>    <span class="s2">&quot;uber-raw-data-sep14.csv.gz&quot;</span><span class="p">,</span>
+<a id="__codelineno-28-3" name="__codelineno-28-3"></a>    <span class="c1"># nrows=100000,  # approx. 10% of data</span>
+<a id="__codelineno-28-4" name="__codelineno-28-4"></a>    <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;pyarrow&#39;</span><span class="p">,</span>
+<a id="__codelineno-28-5" name="__codelineno-28-5"></a>    <span class="n">names</span><span class="o">=</span><span class="p">[</span>
+<a id="__codelineno-28-6" name="__codelineno-28-6"></a>        <span class="s2">&quot;date/time&quot;</span><span class="p">,</span>
+<a id="__codelineno-28-7" name="__codelineno-28-7"></a>        <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+<a id="__codelineno-28-8" name="__codelineno-28-8"></a>        <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+<a id="__codelineno-28-9" name="__codelineno-28-9"></a>        <span class="c1"># &quot;CONST&quot;</span>
+<a id="__codelineno-28-10" name="__codelineno-28-10"></a>    <span class="p">],</span>  <span class="c1"># specify names directly since they don&#39;t change</span>
+<a id="__codelineno-28-11" name="__codelineno-28-11"></a>    <span class="n">skiprows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># don&#39;t read header since names specified directly</span>
+<a id="__codelineno-28-12" name="__codelineno-28-12"></a>    <span class="c1"># usecols=[1, 2],  # doesn&#39;t load last column, constant value &quot;B02512&quot;</span>
+<a id="__codelineno-28-13" name="__codelineno-28-13"></a>    <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span>
+<a id="__codelineno-28-14" name="__codelineno-28-14"></a>        <span class="s2">&quot;date/time&quot;</span>
+<a id="__codelineno-28-15" name="__codelineno-28-15"></a>    <span class="p">],</span>  <span class="c1"># set as datetime instead of converting after the fact</span>
+<a id="__codelineno-28-16" name="__codelineno-28-16"></a>    <span class="c1"># # infer_datetime_format=True  # Unsupported for pyarrow</span>
+<a id="__codelineno-28-17" name="__codelineno-28-17"></a>    <span class="n">date_parser</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<a id="__codelineno-28-18" name="__codelineno-28-18"></a><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+      <th>date/time</th>
+      <th>lat</th>
+      <th>lon</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>9/1/2014 0:01:00</td>
+      <td>1970-01-01 00:00:00.000000040</td>
+      <td>-74.0021</td>
+      <td>B02512</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>9/1/2014 0:01:00</td>
+      <td>1970-01-01 00:00:00.000000040</td>
+      <td>-74.0027</td>
+      <td>B02512</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>9/1/2014 0:03:00</td>
+      <td>1970-01-01 00:00:00.000000040</td>
+      <td>-73.9864</td>
+      <td>B02512</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>9/1/2014 0:06:00</td>
+      <td>1970-01-01 00:00:00.000000040</td>
+      <td>-73.9889</td>
+      <td>B02512</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>9/1/2014 0:11:00</td>
+      <td>1970-01-01 00:00:00.000000040</td>
+      <td>-73.9444</td>
+      <td>B02512</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>1028131</th>
+      <td>9/30/2014 22:57:00</td>
+      <td>1970-01-01 00:00:00.000000040</td>
+      <td>-73.9845</td>
+      <td>B02764</td>
+    </tr>
+    <tr>
+      <th>1028132</th>
+      <td>9/30/2014 22:57:00</td>
+      <td>1970-01-01 00:00:00.000000040</td>
+      <td>-74.1773</td>
+      <td>B02764</td>
+    </tr>
+    <tr>
+      <th>1028133</th>
+      <td>9/30/2014 22:58:00</td>
+      <td>1970-01-01 00:00:00.000000040</td>
+      <td>-73.9319</td>
+      <td>B02764</td>
+    </tr>
+    <tr>
+      <th>1028134</th>
+      <td>9/30/2014 22:58:00</td>
+      <td>1970-01-01 00:00:00.000000040</td>
+      <td>-74.0066</td>
+      <td>B02764</td>
+    </tr>
+    <tr>
+      <th>1028135</th>
+      <td>9/30/2014 22:58:00</td>
+      <td>1970-01-01 00:00:00.000000040</td>
+      <td>-73.9496</td>
+      <td>B02764</td>
+    </tr>
+  </tbody>
+</table>
+<p>1028136 rows × 4 columns</p>
+</div>
+
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-29-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-29-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-29-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-29-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-29-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-29-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-29-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-29-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-29-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-29-10">10</a></span>
+<span class="normal"><a href="#__codelineno-29-11">11</a></span>
+<span class="normal"><a href="#__codelineno-29-12">12</a></span>
+<span class="normal"><a href="#__codelineno-29-13">13</a></span>
+<span class="normal"><a href="#__codelineno-29-14">14</a></span>
+<span class="normal"><a href="#__codelineno-29-15">15</a></span>
+<span class="normal"><a href="#__codelineno-29-16">16</a></span>
+<span class="normal"><a href="#__codelineno-29-17">17</a></span>
+<span class="normal"><a href="#__codelineno-29-18">18</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1"></a><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+<a id="__codelineno-29-2" name="__codelineno-29-2"></a>    <span class="s2">&quot;uber-raw-data-sep14.csv.gz&quot;</span><span class="p">,</span>
+<a id="__codelineno-29-3" name="__codelineno-29-3"></a>    <span class="c1"># nrows=100000,  # approx. 10% of data</span>
+<a id="__codelineno-29-4" name="__codelineno-29-4"></a>    <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;pyarrow&#39;</span><span class="p">,</span>
+<a id="__codelineno-29-5" name="__codelineno-29-5"></a>    <span class="c1"># names=[</span>
+<a id="__codelineno-29-6" name="__codelineno-29-6"></a>    <span class="c1">#     &quot;date/time&quot;,</span>
+<a id="__codelineno-29-7" name="__codelineno-29-7"></a>    <span class="c1">#     &quot;lat&quot;,</span>
+<a id="__codelineno-29-8" name="__codelineno-29-8"></a>    <span class="c1">#     &quot;lon&quot;,</span>
+<a id="__codelineno-29-9" name="__codelineno-29-9"></a>    <span class="c1">#     &quot;CONST&quot;</span>
+<a id="__codelineno-29-10" name="__codelineno-29-10"></a>    <span class="c1"># ],  # specify names directly since they don&#39;t change</span>
+<a id="__codelineno-29-11" name="__codelineno-29-11"></a>    <span class="c1"># skiprows=1,  # don&#39;t read header since names specified directly</span>
+<a id="__codelineno-29-12" name="__codelineno-29-12"></a>    <span class="n">usecols</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span>  <span class="c1"># doesn&#39;t load last column, constant value &quot;B02512&quot;</span>
+<a id="__codelineno-29-13" name="__codelineno-29-13"></a>    <span class="c1"># parse_dates=[</span>
+<a id="__codelineno-29-14" name="__codelineno-29-14"></a>    <span class="c1">#     &quot;date/time&quot;</span>
+<a id="__codelineno-29-15" name="__codelineno-29-15"></a>    <span class="c1"># ],  # set as datetime instead of converting after the fact</span>
+<a id="__codelineno-29-16" name="__codelineno-29-16"></a>    <span class="c1"># # infer_datetime_format=True  # Unsupported for pyarrow</span>
+<a id="__codelineno-29-17" name="__codelineno-29-17"></a>    <span class="c1"># date_parser=lambda x: pd.to_datetime(x)</span>
+<a id="__codelineno-29-18" name="__codelineno-29-18"></a><span class="p">)</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span></pre></div></td><td class="code"><div><pre><span></span><code>---------------------------------------------------------------------------
+
+TypeError                                 Traceback (most recent call last)
+
+/Users/gar/projects/tech-blog/_notebooks/2022-04-26-holy-duck.ipynb Cell 44&#39; in &lt;cell line: 1&gt;()
+----&gt; &lt;a href=&#39;vscode-notebook-cell:/Users/gar/projects/tech-blog/_notebooks/2022-04-26-holy-duck.ipynb#ch0000038?line=0&#39;&gt;1&lt;/a&gt; pd.read_csv(
+      &lt;a href=&#39;vscode-notebook-cell:/Users/gar/projects/tech-blog/_notebooks/2022-04-26-holy-duck.ipynb#ch0000038?line=1&#39;&gt;2&lt;/a&gt;     &quot;uber-raw-data-sep14.csv.gz&quot;,
+      &lt;a href=&#39;vscode-notebook-cell:/Users/gar/projects/tech-blog/_notebooks/2022-04-26-holy-duck.ipynb#ch0000038?line=2&#39;&gt;3&lt;/a&gt;     # nrows=100000,  # approx. 10% of data
+      &lt;a href=&#39;vscode-notebook-cell:/Users/gar/projects/tech-blog/_notebooks/2022-04-26-holy-duck.ipynb#ch0000038?line=3&#39;&gt;4&lt;/a&gt;     engine=&#39;pyarrow&#39;,
+      &lt;a href=&#39;vscode-notebook-cell:/Users/gar/projects/tech-blog/_notebooks/2022-04-26-holy-duck.ipynb#ch0000038?line=4&#39;&gt;5&lt;/a&gt;     # names=[
+      &lt;a href=&#39;vscode-notebook-cell:/Users/gar/projects/tech-blog/_notebooks/2022-04-26-holy-duck.ipynb#ch0000038?line=5&#39;&gt;6&lt;/a&gt;     #     &quot;date/time&quot;,
+      &lt;a href=&#39;vscode-notebook-cell:/Users/gar/projects/tech-blog/_notebooks/2022-04-26-holy-duck.ipynb#ch0000038?line=6&#39;&gt;7&lt;/a&gt;     #     &quot;lat&quot;,
+      &lt;a href=&#39;vscode-notebook-cell:/Users/gar/projects/tech-blog/_notebooks/2022-04-26-holy-duck.ipynb#ch0000038?line=7&#39;&gt;8&lt;/a&gt;     #     &quot;lon&quot;,
+      &lt;a href=&#39;vscode-notebook-cell:/Users/gar/projects/tech-blog/_notebooks/2022-04-26-holy-duck.ipynb#ch0000038?line=8&#39;&gt;9&lt;/a&gt;     #     &quot;CONST&quot;
+     &lt;a href=&#39;vscode-notebook-cell:/Users/gar/projects/tech-blog/_notebooks/2022-04-26-holy-duck.ipynb#ch0000038?line=9&#39;&gt;10&lt;/a&gt;     # ],  # specify names directly since they don&#39;t change
+     &lt;a href=&#39;vscode-notebook-cell:/Users/gar/projects/tech-blog/_notebooks/2022-04-26-holy-duck.ipynb#ch0000038?line=10&#39;&gt;11&lt;/a&gt;     # skiprows=1,  # don&#39;t read header since names specified directly
+     &lt;a href=&#39;vscode-notebook-cell:/Users/gar/projects/tech-blog/_notebooks/2022-04-26-holy-duck.ipynb#ch0000038?line=11&#39;&gt;12&lt;/a&gt;     usecols=[0,1],  # doesn&#39;t load last column, constant value &quot;B02512&quot;
+     &lt;a href=&#39;vscode-notebook-cell:/Users/gar/projects/tech-blog/_notebooks/2022-04-26-holy-duck.ipynb#ch0000038?line=12&#39;&gt;13&lt;/a&gt;     # parse_dates=[
+     &lt;a href=&#39;vscode-notebook-cell:/Users/gar/projects/tech-blog/_notebooks/2022-04-26-holy-duck.ipynb#ch0000038?line=13&#39;&gt;14&lt;/a&gt;     #     &quot;date/time&quot;
+     &lt;a href=&#39;vscode-notebook-cell:/Users/gar/projects/tech-blog/_notebooks/2022-04-26-holy-duck.ipynb#ch0000038?line=14&#39;&gt;15&lt;/a&gt;     # ],  # set as datetime instead of converting after the fact
+     &lt;a href=&#39;vscode-notebook-cell:/Users/gar/projects/tech-blog/_notebooks/2022-04-26-holy-duck.ipynb#ch0000038?line=15&#39;&gt;16&lt;/a&gt;     # # infer_datetime_format=True  # Unsupported for pyarrow
+     &lt;a href=&#39;vscode-notebook-cell:/Users/gar/projects/tech-blog/_notebooks/2022-04-26-holy-duck.ipynb#ch0000038?line=16&#39;&gt;17&lt;/a&gt;     # date_parser=lambda x: pd.to_datetime(x)
+     &lt;a href=&#39;vscode-notebook-cell:/Users/gar/projects/tech-blog/_notebooks/2022-04-26-holy-duck.ipynb#ch0000038?line=17&#39;&gt;18&lt;/a&gt; ).info()
+
+
+File ~/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/util/_decorators.py:311, in deprecate_nonkeyword_arguments.&lt;locals&gt;.decorate.&lt;locals&gt;.wrapper(*args, **kwargs)
+    &lt;a href=&#39;file:///Users/gar/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/util/_decorators.py?line=304&#39;&gt;305&lt;/a&gt; if len(args) &gt; num_allow_args:
+    &lt;a href=&#39;file:///Users/gar/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/util/_decorators.py?line=305&#39;&gt;306&lt;/a&gt;     warnings.warn(
+    &lt;a href=&#39;file:///Users/gar/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/util/_decorators.py?line=306&#39;&gt;307&lt;/a&gt;         msg.format(arguments=arguments),
+    &lt;a href=&#39;file:///Users/gar/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/util/_decorators.py?line=307&#39;&gt;308&lt;/a&gt;         FutureWarning,
+    &lt;a href=&#39;file:///Users/gar/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/util/_decorators.py?line=308&#39;&gt;309&lt;/a&gt;         stacklevel=stacklevel,
+    &lt;a href=&#39;file:///Users/gar/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/util/_decorators.py?line=309&#39;&gt;310&lt;/a&gt;     )
+--&gt; &lt;a href=&#39;file:///Users/gar/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/util/_decorators.py?line=310&#39;&gt;311&lt;/a&gt; return func(*args, **kwargs)
+
+
+File ~/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/io/parsers/readers.py:680, in read_csv(filepath_or_buffer, sep, delimiter, header, names, index_col, usecols, squeeze, prefix, mangle_dupe_cols, dtype, engine, converters, true_values, false_values, skipinitialspace, skiprows, skipfooter, nrows, na_values, keep_default_na, na_filter, verbose, skip_blank_lines, parse_dates, infer_datetime_format, keep_date_col, date_parser, dayfirst, cache_dates, iterator, chunksize, compression, thousands, decimal, lineterminator, quotechar, quoting, doublequote, escapechar, comment, encoding, encoding_errors, dialect, error_bad_lines, warn_bad_lines, on_bad_lines, delim_whitespace, low_memory, memory_map, float_precision, storage_options)
+    &lt;a href=&#39;file:///Users/gar/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/io/parsers/readers.py?line=664&#39;&gt;665&lt;/a&gt; kwds_defaults = _refine_defaults_read(
+    &lt;a href=&#39;file:///Users/gar/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/io/parsers/readers.py?line=665&#39;&gt;666&lt;/a&gt;     dialect,
+    &lt;a href=&#39;file:///Users/gar/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/io/parsers/readers.py?line=666&#39;&gt;667&lt;/a&gt;     delimiter,
+   (...)
+    &lt;a href=&#39;file:///Users/gar/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/io/parsers/readers.py?line=675&#39;&gt;676&lt;/a&gt;     defaults={&quot;delimiter&quot;: &quot;,&quot;},
+    &lt;a href=&#39;file:///Users/gar/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/io/parsers/readers.py?line=676&#39;&gt;677&lt;/a&gt; )
+    &lt;a href=&#39;file:///Users/gar/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/io/parsers/readers.py?line=677&#39;&gt;678&lt;/a&gt; kwds.update(kwds_defaults)
+--&gt; &lt;a href=&#39;file:///Users/gar/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/io/parsers/readers.py?line=679&#39;&gt;680&lt;/a&gt; return _read(filepath_or_buffer, kwds)
+
+
+File ~/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/io/parsers/readers.py:581, in _read(filepath_or_buffer, kwds)
+    &lt;a href=&#39;file:///Users/gar/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/io/parsers/readers.py?line=577&#39;&gt;578&lt;/a&gt;     return parser
+    &lt;a href=&#39;file:///Users/gar/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/io/parsers/readers.py?line=579&#39;&gt;580&lt;/a&gt; with parser:
+--&gt; &lt;a href=&#39;file:///Users/gar/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/io/parsers/readers.py?line=580&#39;&gt;581&lt;/a&gt;     return parser.read(nrows)
+
+
+File ~/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/io/parsers/readers.py:1243, in TextFileReader.read(self, nrows)
+   &lt;a href=&#39;file:///Users/gar/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/io/parsers/readers.py?line=1240&#39;&gt;1241&lt;/a&gt; if self.engine == &quot;pyarrow&quot;:
+   &lt;a href=&#39;file:///Users/gar/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/io/parsers/readers.py?line=1241&#39;&gt;1242&lt;/a&gt;     try:
+-&gt; &lt;a href=&#39;file:///Users/gar/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/io/parsers/readers.py?line=1242&#39;&gt;1243&lt;/a&gt;         df = self._engine.read()
+   &lt;a href=&#39;file:///Users/gar/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/io/parsers/readers.py?line=1243&#39;&gt;1244&lt;/a&gt;     except Exception:
+   &lt;a href=&#39;file:///Users/gar/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/io/parsers/readers.py?line=1244&#39;&gt;1245&lt;/a&gt;         self.close()
+
+
+File ~/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/io/parsers/arrow_parser_wrapper.py:153, in ArrowParserWrapper.read(self)
+    &lt;a href=&#39;file:///Users/gar/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/io/parsers/arrow_parser_wrapper.py?line=145&#39;&gt;146&lt;/a&gt; pyarrow_csv = import_optional_dependency(&quot;pyarrow.csv&quot;)
+    &lt;a href=&#39;file:///Users/gar/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/io/parsers/arrow_parser_wrapper.py?line=146&#39;&gt;147&lt;/a&gt; self._get_pyarrow_options()
+    &lt;a href=&#39;file:///Users/gar/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/io/parsers/arrow_parser_wrapper.py?line=148&#39;&gt;149&lt;/a&gt; table = pyarrow_csv.read_csv(
+    &lt;a href=&#39;file:///Users/gar/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/io/parsers/arrow_parser_wrapper.py?line=149&#39;&gt;150&lt;/a&gt;     self.src,
+    &lt;a href=&#39;file:///Users/gar/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/io/parsers/arrow_parser_wrapper.py?line=150&#39;&gt;151&lt;/a&gt;     read_options=pyarrow_csv.ReadOptions(**self.read_options),
+    &lt;a href=&#39;file:///Users/gar/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/io/parsers/arrow_parser_wrapper.py?line=151&#39;&gt;152&lt;/a&gt;     parse_options=pyarrow_csv.ParseOptions(**self.parse_options),
+--&gt; &lt;a href=&#39;file:///Users/gar/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/io/parsers/arrow_parser_wrapper.py?line=152&#39;&gt;153&lt;/a&gt;     convert_options=pyarrow_csv.ConvertOptions(**self.convert_options),
+    &lt;a href=&#39;file:///Users/gar/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/io/parsers/arrow_parser_wrapper.py?line=153&#39;&gt;154&lt;/a&gt; )
+    &lt;a href=&#39;file:///Users/gar/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/io/parsers/arrow_parser_wrapper.py?line=155&#39;&gt;156&lt;/a&gt; frame = table.to_pandas()
+    &lt;a href=&#39;file:///Users/gar/miniconda3/envs/py39/lib/python3.9/site-packages/pandas/io/parsers/arrow_parser_wrapper.py?line=156&#39;&gt;157&lt;/a&gt; return self._finalize_output(frame)
+
+
+File ~/miniconda3/envs/py39/lib/python3.9/site-packages/pyarrow/_csv.pyx:580, in pyarrow._csv.ConvertOptions.__init__()
+
+
+File ~/miniconda3/envs/py39/lib/python3.9/site-packages/pyarrow/_csv.pyx:734, in pyarrow._csv.ConvertOptions.include_columns.__set__()
+
+
+File stringsource:15, in string.from_py.__pyx_convert_string_from_py_std__in_string()
+
+
+TypeError: expected bytes, int found
+</code></pre></div></td></tr></table></div>
+
+  <hr>
+<div class="md-source-file">
+  <small>
+    
+      Last update:
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">June 7, 2023</span>
+      
+        <br>
+        Created:
+        <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">June 7, 2023</span>
+      
+    
+  </small>
+</div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <a href="#" class="md-top md-icon" data-md-component="top" hidden>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+            Back to top
+          </a>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../gitlab-workflow/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Gitlab Workflow Project Management" rel="prev">
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  Previous
+                </span>
+                Gitlab Workflow Project Management
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../how-i-code/" class="md-footer__link md-footer__link--next" aria-label="Next: How I Edit Text Files (VS Code Settings)" rel="next">
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  Next
+                </span>
+                How I Edit Text Files (VS Code Settings)
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2020 - 2023 Gerard Bentley
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+      
+      
+    
+    <a href="https://gerardbentley.com/@gar" target="_blank" rel="noopener" title="gerardbentley.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M433 179.11c0-97.2-63.71-125.7-63.71-125.7-62.52-28.7-228.56-28.4-290.48 0 0 0-63.72 28.5-63.72 125.7 0 115.7-6.6 259.4 105.63 289.1 40.51 10.7 75.32 13 103.33 11.4 50.81-2.8 79.32-18.1 79.32-18.1l-1.7-36.9s-36.31 11.4-77.12 10.1c-40.41-1.4-83-4.4-89.63-54a102.54 102.54 0 0 1-.9-13.9c85.63 20.9 158.65 9.1 178.75 6.7 56.12-6.7 105-41.3 111.23-72.9 9.8-49.8 9-121.5 9-121.5zm-75.12 125.2h-46.63v-114.2c0-49.7-64-51.6-64 6.9v62.5h-46.33V197c0-58.5-64-56.6-64-6.9v114.2H90.19c0-122.1-5.2-147.9 18.41-175 25.9-28.9 79.82-30.8 103.83 6.1l11.6 19.5 11.6-19.5c24.11-37.1 78.12-34.8 103.83-6.1 23.71 27.3 18.4 53 18.4 175z"/></svg>
+    </a>
+  
+    
+    
+      
+      
+    
+    <a href="https://twitter.com/garsbar35plus" target="_blank" rel="noopener" title="twitter.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+    </a>
+  
+    
+    
+      
+      
+    
+    <a href="https://github.com/gerardrbentley" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+      
+      
+    
+    <a href="https://www.linkedin.com/in/gerardrbentley/" target="_blank" rel="noopener" title="www.linkedin.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.footer", "navigation.tracking", "toc.follow", "search.suggest", "search.highlight", "search.share", "header.autohide"], "search": "../../assets/javascripts/workers/search.12658920.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.5cf534bf.min.js"></script>
+      
+    
+  </body>
+</html>

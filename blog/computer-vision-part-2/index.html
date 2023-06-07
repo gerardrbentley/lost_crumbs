@@ -1,0 +1,2647 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Loading Images and Segmentation Mask Images into Pytorch Datasets and Dataloaders. After this step our data is ready to be processed by a Pytorch model!">
+      
+      
+      
+        <link rel="canonical" href="https://home.gerardbentley.com/blog/computer-vision-part-2/">
+      
+      
+        <link rel="prev" href="../computer-vision-part-1/">
+      
+      
+        <link rel="next" href="../computer-vision-part-3/">
+      
+      <link rel="icon" href="../../images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.0.2">
+    
+    
+      
+        <title>Computer Vision Part 2: Load Tagged Data With Pytorch - Lost Crumbs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.f56500e0.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.2505c338.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/youtube.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+      
+        <meta  property="og:type"  content="website" >
+      
+        <meta  property="og:title"  content="Computer Vision Part 2: Load Tagged Data With Pytorch - Lost Crumbs" >
+      
+        <meta  property="og:description"  content="Loading Images and Segmentation Mask Images into Pytorch Datasets and Dataloaders. After this step our data is ready to be processed by a Pytorch model!" >
+      
+        <meta  property="og:image"  content="https://home.gerardbentley.com/assets/images/social/blog/computer-vision-part-2.png" >
+      
+        <meta  property="og:image:type"  content="image/png" >
+      
+        <meta  property="og:image:width"  content="1200" >
+      
+        <meta  property="og:image:height"  content="630" >
+      
+        <meta  property="og:url"  content="https://home.gerardbentley.com/blog/computer-vision-part-2/" >
+      
+        <meta  name="twitter:card"  content="summary_large_image" >
+      
+        <meta  name="twitter:title"  content="Computer Vision Part 2: Load Tagged Data With Pytorch - Lost Crumbs" >
+      
+        <meta  name="twitter:description"  content="Loading Images and Segmentation Mask Images into Pytorch Datasets and Dataloaders. After this step our data is ready to be processed by a Pytorch model!" >
+      
+        <meta  name="twitter:image"  content="https://home.gerardbentley.com/assets/images/social/blog/computer-vision-part-2.png" >
+      
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#computer-vision-part-2-load-tagged-data-with-pytorch" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Lost Crumbs" class="md-header__button md-logo" aria-label="Lost Crumbs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2c5.5 0 10 3.36 10 7.5 0 1.69-.74 3.25-2 4.5v8H4v-8c-1.26-1.25-2-2.81-2-4.5C2 5.36 6.5 2 12 2M8 18h4v-4H8v4Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Lost Crumbs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Computer Vision Part 2: Load Tagged Data With Pytorch
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent=""  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"/></svg>
+            </label>
+          
+        
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent=""  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08Z"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gerardrbentley/lost_crumbs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    gerardrbentley/lost_crumbs
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../.." class="md-tabs__link">
+      Home
+    </a>
+  </li>
+
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../" class="md-tabs__link md-tabs__link--active">
+        Blog
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../guides/" class="md-tabs__link">
+        Guides
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../resources/" class="md-tabs__link">
+        Resources
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../setups/" class="md-tabs__link">
+        Setups
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../tags/" class="md-tabs__link">
+      Tags
+    </a>
+  </li>
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Lost Crumbs" class="md-nav__button md-logo" aria-label="Lost Crumbs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2c5.5 0 10 3.36 10 7.5 0 1.69-.74 3.25-2 4.5v8H4v-8c-1.26-1.25-2-2.81-2-4.5C2 5.36 6.5 2 12 2M8 18h4v-4H8v4Z"/></svg>
+
+    </a>
+    Lost Crumbs
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gerardrbentley/lost_crumbs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    gerardrbentley/lost_crumbs
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
+      
+      
+      
+        
+          
+            
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../">Blog</a>
+          
+            <label for="__nav_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="Blog" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Blog
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bottle-htmx-streamlit/" class="md-nav__link">
+        Bottle + HTMX vs Streamlit
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../brain-dump-2022/" class="md-nav__link">
+        Brain Dump 2022
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../computer-vision-part-1/" class="md-nav__link">
+        Computer Vision Part 1: Loading Images with Python
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Computer Vision Part 2: Load Tagged Data With Pytorch
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Computer Vision Part 2: Load Tagged Data With Pytorch
+      </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="Page Index">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Page Index
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#0-python-setup" class="md-nav__link">
+    0. Python Setup
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-image-and-target-loading" class="md-nav__link">
+    1. Image and Target Loading
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-pytorch-dataset" class="md-nav__link">
+    2. Pytorch Dataset
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-load-the-folder-into-a-dataset" class="md-nav__link">
+    3. Load the folder into a Dataset
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-load-into-dataloader" class="md-nav__link">
+    4. Load into DataLoader
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-bonus-overfit-dataset" class="md-nav__link">
+    5. BONUS: Overfit Dataset
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../computer-vision-part-3/" class="md-nav__link">
+        Computer Vision Part 3: Train U-Net Architecture to predict UI segmentation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cte-subquery-who-gives-a-duck/" class="md-nav__link">
+        CTE vs Subquery: Who gives a 🦆uck?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gitlab-workflow/" class="md-nav__link">
+        Gitlab Workflow Project Management
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../holy-duck/" class="md-nav__link">
+        Holy 🦆uck! Fast Analysis with DuckDB + Pyarrow
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-i-code/" class="md-nav__link">
+        How I Edit Text Files (VS Code Settings)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lightgbm-water-pumps/" class="md-nav__link">
+        LightGBM Predicting Water Pump Functionality
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../my-favorite-python-one-liner-sucks/" class="md-nav__link">
+        My Favorite Python One Liner Sucks
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../personal-domain/" class="md-nav__link">
+        Share a website to the world in less than a day (Free for Students!)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pipreqs-fastapi/" class="md-nav__link">
+        Pipreqs FastAPI Server + Github Bot
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../python-form-generator/" class="md-nav__link">
+        Python Form Generator (JSON to Streamlit Form!)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../run-python/" class="md-nav__link">
+        3 Ways to Run Python Code
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../streamlit-fullstack/" class="md-nav__link">
+        Streamlit Full Stack Part 1: Python Web App in One File
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../streamlit-url-scan/" class="md-nav__link">
+        Scanning URLs from Images
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../terminal/" class="md-nav__link">
+        The Terminal (/ Shell / Command Line / Console)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../timeseries-part-1/" class="md-nav__link">
+        Time Series Data Part 1: What is a Time Series?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../timeseries-part-2/" class="md-nav__link">
+        Time Series Data Part 2: Darts and Streamlit
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../timeseries-part-3/" class="md-nav__link">
+        Time Series Data Part 3: Custom Model Tuning
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../timeseries-part-4/" class="md-nav__link">
+        Time Series Data Part 4: A Full Stack Use Case
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vgac-tagging/" class="md-nav__link">
+        Custom Data Tagging with Python OpenCV
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../weather-forecast-dashboard/" class="md-nav__link">
+        Checking 48 Mountain Weather Locations at Once
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+        
+          
+            
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../guides/">Guides</a>
+          
+            <label for="__nav_3">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="Guides" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Guides
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/geoparquet_intro/" class="md-nav__link">
+        GeoParquet Intro
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/golang_postgres_stack/" class="md-nav__link">
+        Project Golang Postgres Stack
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/golang_postgres_streamlit_stack/" class="md-nav__link">
+        Project Golang Postgres Streamlit Stack
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/golang_webserver/" class="md-nav__link">
+        Project Golang Webserver
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+        
+          
+            
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../resources/">Resources</a>
+          
+            <label for="__nav_4">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="Resources" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Resources
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/ci_cd/" class="md-nav__link">
+        CI/CD
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/circleci/" class="md-nav__link">
+        CircleCI
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/curl/" class="md-nav__link">
+        curl
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/frontend/" class="md-nav__link">
+        Frontend
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/gatsby/" class="md-nav__link">
+        Gatsby
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/git/" class="md-nav__link">
+        Git
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/gitlab/" class="md-nav__link">
+        Gitlab
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/golang/" class="md-nav__link">
+        Golang
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/graphql/" class="md-nav__link">
+        GraphQL
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/heroku/" class="md-nav__link">
+        Heroku
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/javascript/" class="md-nav__link">
+        Javascript
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/linux/" class="md-nav__link">
+        Linux
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/local_network/" class="md-nav__link">
+        Local Network
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/local_server/" class="md-nav__link">
+        Local Server
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/machine_learning/" class="md-nav__link">
+        Machine Learning
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/markdown/" class="md-nav__link">
+        Markdown
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/node/" class="md-nav__link">
+        Node JS
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/open_source/" class="md-nav__link">
+        Open Source
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/postgres/" class="md-nav__link">
+        Postgres
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/python/" class="md-nav__link">
+        Python
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/react/" class="md-nav__link">
+        React JS
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/reverse_proxy/" class="md-nav__link">
+        Reverse Proxy
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/scp/" class="md-nav__link">
+        SCP
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/time_series/" class="md-nav__link">
+        Time Series
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/windows/" class="md-nav__link">
+        Windows
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/yaml/" class="md-nav__link">
+        YAML
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      
+      
+        
+          
+            
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../setups/">Setups</a>
+          
+            <label for="__nav_5">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="Setups" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Setups
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setups/docker/" class="md-nav__link">
+        Docker
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setups/domain/" class="md-nav__link">
+        Domain Name
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setups/git/" class="md-nav__link">
+        Git
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setups/golang/" class="md-nav__link">
+        Golang
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setups/ide/" class="md-nav__link">
+        IDE
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setups/macos/" class="md-nav__link">
+        macOS
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setups/nginx_proxy_manager/" class="md-nav__link">
+        Nginx Proxy Manager
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setups/postgres/" class="md-nav__link">
+        Postgres
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setups/python/" class="md-nav__link">
+        Python
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setups/ssh/" class="md-nav__link">
+        SSH
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setups/terminal/" class="md-nav__link">
+        Terminal
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setups/vps/" class="md-nav__link">
+        VPS
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tags/" class="md-nav__link">
+        Tags
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="Page Index">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Page Index
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#0-python-setup" class="md-nav__link">
+    0. Python Setup
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-image-and-target-loading" class="md-nav__link">
+    1. Image and Target Loading
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-pytorch-dataset" class="md-nav__link">
+    2. Pytorch Dataset
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-load-the-folder-into-a-dataset" class="md-nav__link">
+    3. Load the folder into a Dataset
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-load-into-dataloader" class="md-nav__link">
+    4. Load into DataLoader
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-bonus-overfit-dataset" class="md-nav__link">
+    5. BONUS: Overfit Dataset
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+  
+
+  <nav class="md-tags" >
+    
+      
+      
+        <a href="../../tags/#moderate" class="md-tag">moderate</a>
+      
+    
+      
+      
+        <a href="../../tags/#machine-learning" class="md-tag">machine-learning</a>
+      
+    
+      
+      
+        <a href="../../tags/#python" class="md-tag">python</a>
+      
+    
+      
+      
+        <a href="../../tags/#pytorch" class="md-tag">pytorch</a>
+      
+    
+      
+      
+        <a href="../../tags/#guide" class="md-tag">guide</a>
+      
+    
+  </nav>
+
+
+
+  
+  
+
+
+
+<h1 id="computer-vision-part-2-load-tagged-data-with-pytorch">Computer Vision Part 2: Load Tagged Data With Pytorch<a class="headerlink" href="#computer-vision-part-2-load-tagged-data-with-pytorch" title="Permanent link">🔗</a></h1>
+<p>From Images and Masks to Loading Data</p>
+<p>In this we'll go take a set of Images and Target labels (black and white mask images), transform them into Pytorch Tensors, and set them up in a Dataloader to be fed into a Neural Net model</p>
+<p>We'll be using PIL / Pillow to load images, as torchvision has built in support for that in its transforms.</p>
+<p>Since Masks are images we won't need to load them with numpy</p>
+<h2 id="0-python-setup">0. Python Setup<a class="headerlink" href="#0-python-setup" title="Permanent link">🔗</a></h2>
+<p>Imports</p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span>
+<span class="normal"><a href="#__codelineno-0-2">2</a></span>
+<span class="normal"><a href="#__codelineno-0-3">3</a></span>
+<span class="normal"><a href="#__codelineno-0-4">4</a></span>
+<span class="normal"><a href="#__codelineno-0-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="c1">#Jupyter Notebook Specific</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="kn">import</span> <span class="nn">matplotlib</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;matplotlib loaded: </span><span class="si">{</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>matplotlib loaded: 3.2.1
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-1-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-1-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-1-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-1-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-1-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-1-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-1-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-1-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-1-10">10</a></span>
+<span class="normal"><a href="#__codelineno-1-11">11</a></span>
+<span class="normal"><a href="#__codelineno-1-12">12</a></span>
+<span class="normal"><a href="#__codelineno-1-13">13</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="kn">import</span> <span class="nn">os</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="kn">import</span> <span class="nn">glob</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4"></a>
+<a id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="kn">import</span> <span class="nn">torch</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6"></a><span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7"></a><span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8"></a>
+<a id="__codelineno-1-9" name="__codelineno-1-9"></a><span class="kn">import</span> <span class="nn">torchvision</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10"></a>
+<a id="__codelineno-1-11" name="__codelineno-1-11"></a><span class="kn">import</span> <span class="nn">PIL</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12"></a><span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;torch </span><span class="si">{</span><span class="n">torch</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">, torchvision </span><span class="si">{</span><span class="n">torchvision</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">, PIL </span><span class="si">{</span><span class="n">PIL</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">, loaded&quot;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>torch 1.4.0, torchvision 0.5.0, PIL 7.1.1, loaded
+</code></pre></div></td></tr></table></div>
+<h2 id="1-image-and-target-loading">1. Image and Target Loading<a class="headerlink" href="#1-image-and-target-loading" title="Permanent link">🔗</a></h2>
+<p>We also want to make sure we're loading our images and targets as we intend, so let's double check that first</p>
+<p>Our example will be to segment what is UI and what is not UI, so we can get away with just one color to signal UI. </p>
+<p>We're treating the target as binary, so 'L' or '1' Mode in PIL should work. We most care about it being binary 0 and 1 after transforming to torch tensor</p>
+<p><strong>SIDE-NOTE</strong> In a multi-class segmentation problem (e.x. self-driving cars segmenting 'road', 'sky', 'people', 'cars', etc.) we often use different colors to represent different classes in our target data, which requires an additional step to our data-loading pipeline. The colors used don't matter, so long as they are unique and consistent; since the color values are known, we make a pytorch tensor of all 0's for each class (which is the same width and height as our target segmentation image), then fill each with a 1 only where the target segmentation pixels are equal to that specific class color value.</p>
+<p>One caveat to this is that you cannot have overlapping segmentations. You'd need to either save a segmentation image for each class, save the segmentations as multi-dimensional (as many dimensions as you have classes) tensors / arrays, or perform some kind of bit shifting or mod operations on pixel values to allow multiple class-colors to overlap and add together.</p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-2-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-2-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-2-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-2-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-2-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-2-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-2-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-2-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-2-10">10</a></span>
+<span class="normal"><a href="#__codelineno-2-11">11</a></span>
+<span class="normal"><a href="#__codelineno-2-12">12</a></span>
+<span class="normal"><a href="#__codelineno-2-13">13</a></span>
+<span class="normal"><a href="#__codelineno-2-14">14</a></span>
+<span class="normal"><a href="#__codelineno-2-15">15</a></span>
+<span class="normal"><a href="#__codelineno-2-16">16</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="n">test_image_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;test_inputs&#39;</span><span class="p">,</span> <span class="s1">&#39;1_input.png&#39;</span><span class="p">)</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="n">test_target_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;test_inputs&#39;</span><span class="p">,</span> <span class="s1">&#39;1_target.jpg&#39;</span><span class="p">)</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3"></a>
+<a id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">test_image_path</span><span class="p">)</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s1">&#39;RGB&#39;</span><span class="p">)</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5"></a><span class="n">target</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">test_target_path</span><span class="p">)</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">)</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6"></a>
+<a id="__codelineno-2-7" name="__codelineno-2-7"></a><span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">size</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8"></a><span class="c1"># Hacky image grid with PIL, torchvision has a decent built in function for use with tensors, and of course matplotlib has subplots()</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9"></a><span class="n">test_image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;RGB&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">width</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">height</span><span class="p">))</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10"></a><span class="n">test_image</span><span class="o">.</span><span class="n">paste</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11"></a><span class="n">test_image</span><span class="o">.</span><span class="n">paste</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="p">(</span><span class="n">width</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12"></a>
+<a id="__codelineno-2-13" name="__codelineno-2-13"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;(Image, Target) loaded with pil: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">image</span><span class="p">),</span><span class="w"> </span><span class="nb">type</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="si">}</span><span class="s2">, size: </span><span class="si">{</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">size</span><span class="p">),</span><span class="w"> </span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">size</span><span class="p">)</span><span class="si">}</span><span class="s2">, mode: </span><span class="si">{</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">mode</span><span class="p">),</span><span class="w"> </span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">mode</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14"></a><span class="c1"># Check our scales and colors at load. We&#39;ll need to check this again after converting to tensors</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Image extrema R, G, B: </span><span class="si">{</span><span class="n">image</span><span class="o">.</span><span class="n">getextrema</span><span class="p">()</span><span class="si">}</span><span class="s2">, Target extrema and palette B&amp;W: </span><span class="si">{</span><span class="n">target</span><span class="o">.</span><span class="n">getextrema</span><span class="p">()</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">target</span><span class="o">.</span><span class="n">histogram</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16"></a><span class="n">test_image</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code>(Image, Target) loaded with pil: (&lt;class &#39;PIL.Image.Image&#39;&gt;, &lt;class &#39;PIL.Image.Image&#39;&gt;), size: ((256, 224), (256, 224)), mode: (&#39;RGB&#39;, &#39;1&#39;)
+Image extrema R, G, B: ((0, 255), (0, 251), (0, 255)), Target extrema and palette B&amp;W: (0, 255), [43956, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13388]
+</code></pre></div></td></tr></table></div>
+<p><img alt="png" src="/images/load_segmentation_data_into_pytorch_files/load_segmentation_data_into_pytorch_4_1.png" /></p>
+<h2 id="2-pytorch-dataset">2. Pytorch Dataset<a class="headerlink" href="#2-pytorch-dataset" title="Permanent link">🔗</a></h2>
+<p>Pytorch has 2 tools that make feeding data into your deep learning model easier and rather generalizable to different tasks, data, and domains. These are the <code>Dataset</code> and <code>Dataloader</code> in the <code>torch.utils.data</code> module</p>
+<p>The Dataset Class handles the length of our data and how we receive each sample item. Note that the type of a sample <code>dataset[x_index]</code> depends on the <code>__getitem__</code> function, but also on the <code>transform</code> that is passed in. Also note this sample in the dataset will be a single sample and not have a Batch dimension, even if it is a tensor (this matters at the DataLoader step).</p>
+<p>We'll start with the dataset and provide plenty of comments.</p>
+<p><strong>NOTE</strong> If you're just loading Images (and not targets, e.x. in an auto-encoding task), or are loading Images by class (e.x. predicting animal or pokemon type or something), then <a href="https://pytorch.org/docs/stable/torchvision/datasets.html#imagefolder">torchvision imagefolder</a> is probably the easiest thing to use, it returns a tuple. (sidenote it expects a root directory filled with at least 1 directory of images, that's how it seperates by class)</p>
+<p><a href="https://pytorch.org/tutorials/beginner/data_loading_tutorial.html">Dataloading Tutorial</a></p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-3-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-3-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-3-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-3-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-3-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-3-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-3-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-3-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-3-10">10</a></span>
+<span class="normal"><a href="#__codelineno-3-11">11</a></span>
+<span class="normal"><a href="#__codelineno-3-12">12</a></span>
+<span class="normal"><a href="#__codelineno-3-13">13</a></span>
+<span class="normal"><a href="#__codelineno-3-14">14</a></span>
+<span class="normal"><a href="#__codelineno-3-15">15</a></span>
+<span class="normal"><a href="#__codelineno-3-16">16</a></span>
+<span class="normal"><a href="#__codelineno-3-17">17</a></span>
+<span class="normal"><a href="#__codelineno-3-18">18</a></span>
+<span class="normal"><a href="#__codelineno-3-19">19</a></span>
+<span class="normal"><a href="#__codelineno-3-20">20</a></span>
+<span class="normal"><a href="#__codelineno-3-21">21</a></span>
+<span class="normal"><a href="#__codelineno-3-22">22</a></span>
+<span class="normal"><a href="#__codelineno-3-23">23</a></span>
+<span class="normal"><a href="#__codelineno-3-24">24</a></span>
+<span class="normal"><a href="#__codelineno-3-25">25</a></span>
+<span class="normal"><a href="#__codelineno-3-26">26</a></span>
+<span class="normal"><a href="#__codelineno-3-27">27</a></span>
+<span class="normal"><a href="#__codelineno-3-28">28</a></span>
+<span class="normal"><a href="#__codelineno-3-29">29</a></span>
+<span class="normal"><a href="#__codelineno-3-30">30</a></span>
+<span class="normal"><a href="#__codelineno-3-31">31</a></span>
+<span class="normal"><a href="#__codelineno-3-32">32</a></span>
+<span class="normal"><a href="#__codelineno-3-33">33</a></span>
+<span class="normal"><a href="#__codelineno-3-34">34</a></span>
+<span class="normal"><a href="#__codelineno-3-35">35</a></span>
+<span class="normal"><a href="#__codelineno-3-36">36</a></span>
+<span class="normal"><a href="#__codelineno-3-37">37</a></span>
+<span class="normal"><a href="#__codelineno-3-38">38</a></span>
+<span class="normal"><a href="#__codelineno-3-39">39</a></span>
+<span class="normal"><a href="#__codelineno-3-40">40</a></span>
+<span class="normal"><a href="#__codelineno-3-41">41</a></span>
+<span class="normal"><a href="#__codelineno-3-42">42</a></span>
+<span class="normal"><a href="#__codelineno-3-43">43</a></span>
+<span class="normal"><a href="#__codelineno-3-44">44</a></span>
+<span class="normal"><a href="#__codelineno-3-45">45</a></span>
+<span class="normal"><a href="#__codelineno-3-46">46</a></span>
+<span class="normal"><a href="#__codelineno-3-47">47</a></span>
+<span class="normal"><a href="#__codelineno-3-48">48</a></span>
+<span class="normal"><a href="#__codelineno-3-49">49</a></span>
+<span class="normal"><a href="#__codelineno-3-50">50</a></span>
+<span class="normal"><a href="#__codelineno-3-51">51</a></span>
+<span class="normal"><a href="#__codelineno-3-52">52</a></span>
+<span class="normal"><a href="#__codelineno-3-53">53</a></span>
+<span class="normal"><a href="#__codelineno-3-54">54</a></span>
+<span class="normal"><a href="#__codelineno-3-55">55</a></span>
+<span class="normal"><a href="#__codelineno-3-56">56</a></span>
+<span class="normal"><a href="#__codelineno-3-57">57</a></span>
+<span class="normal"><a href="#__codelineno-3-58">58</a></span>
+<span class="normal"><a href="#__codelineno-3-59">59</a></span>
+<span class="normal"><a href="#__codelineno-3-60">60</a></span>
+<span class="normal"><a href="#__codelineno-3-61">61</a></span>
+<span class="normal"><a href="#__codelineno-3-62">62</a></span>
+<span class="normal"><a href="#__codelineno-3-63">63</a></span>
+<span class="normal"><a href="#__codelineno-3-64">64</a></span>
+<span class="normal"><a href="#__codelineno-3-65">65</a></span>
+<span class="normal"><a href="#__codelineno-3-66">66</a></span>
+<span class="normal"><a href="#__codelineno-3-67">67</a></span>
+<span class="normal"><a href="#__codelineno-3-68">68</a></span>
+<span class="normal"><a href="#__codelineno-3-69">69</a></span>
+<span class="normal"><a href="#__codelineno-3-70">70</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="c1"># Optional, i prefer this syntax for accessing the data with data.image and data.target or data[0], data[1]</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2"></a><span class="n">Sample</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;Sample&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;image&#39;</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">])</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3"></a>
+<a id="__codelineno-3-4" name="__codelineno-3-4"></a><span class="k">class</span> <span class="nc">UIImageMaskDataset</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="p">):</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6"></a><span class="sd">    Expects images to be .pngs in data_dir folder of form `1_input.png`, target ui masks to be .jpg files with same number as image and target `1_target.jpg`</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7"></a><span class="sd">    Initialize</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8"></a><span class="sd">    Param: data_dir (String) path to directory with images and targets</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9"></a><span class="sd">    Transform: Torchvision transform to be applied on each image &amp; target pair when fetched from the dataset</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11"></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dir</span><span class="o">=</span><span class="s1">&#39;./test_inputs&#39;</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">=</span> <span class="n">data_dir</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13"></a>
+<a id="__codelineno-3-14" name="__codelineno-3-14"></a>        <span class="c1"># Get file paths</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15"></a>        <span class="c1"># We could use a more clear wildcard (like *_input.png and *_target.jpg if we set up our filenames like that).</span>
+<a id="__codelineno-3-16" name="__codelineno-3-16"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">image_list</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span><span class="si">}</span><span class="s1">/*.png&#39;</span><span class="p">)</span>
+<a id="__codelineno-3-17" name="__codelineno-3-17"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">target_list</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span><span class="si">}</span><span class="s1">/*.jpg&#39;</span><span class="p">)</span>
+<a id="__codelineno-3-18" name="__codelineno-3-18"></a>
+<a id="__codelineno-3-19" name="__codelineno-3-19"></a>        <span class="c1"># For use in methods</span>
+<a id="__codelineno-3-20" name="__codelineno-3-20"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image_list</span><span class="p">)</span>
+<a id="__codelineno-3-21" name="__codelineno-3-21"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">transform</span> <span class="o">=</span> <span class="n">transform</span>
+<a id="__codelineno-3-22" name="__codelineno-3-22"></a>
+<a id="__codelineno-3-23" name="__codelineno-3-23"></a>        <span class="c1"># Basic Error checking, just for testing</span>
+<a id="__codelineno-3-24" name="__codelineno-3-24"></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-3-25" name="__codelineno-3-25"></a>            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No transform on data, you probably need at least ToTensor()&#39;</span><span class="p">)</span>
+<a id="__codelineno-3-26" name="__codelineno-3-26"></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image_list</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_list</span><span class="p">):</span>
+<a id="__codelineno-3-27" name="__codelineno-3-27"></a>            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Image list and Target list not same length&#39;</span><span class="p">)</span>
+<a id="__codelineno-3-28" name="__codelineno-3-28"></a>
+<a id="__codelineno-3-29" name="__codelineno-3-29"></a>    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-3-30" name="__codelineno-3-30"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-3-31" name="__codelineno-3-31"></a><span class="sd">        Required by Pytorch. Return the amount of samples. </span>
+<a id="__codelineno-3-32" name="__codelineno-3-32"></a><span class="sd">        (For overfitting you can make this function return a fixed number and __getitem__ return one image always. </span>
+<a id="__codelineno-3-33" name="__codelineno-3-33"></a><span class="sd">            It can even made infinite with generators, but that&#39;s an advanced topic)</span>
+<a id="__codelineno-3-34" name="__codelineno-3-34"></a><span class="sd">        &quot;&quot;&quot;</span>
+<a id="__codelineno-3-35" name="__codelineno-3-35"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span>
+<a id="__codelineno-3-36" name="__codelineno-3-36"></a>
+<a id="__codelineno-3-37" name="__codelineno-3-37"></a>    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+<a id="__codelineno-3-38" name="__codelineno-3-38"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-3-39" name="__codelineno-3-39"></a><span class="sd">        Also required by Pytorch. </span>
+<a id="__codelineno-3-40" name="__codelineno-3-40"></a><span class="sd">        Loads input and target</span>
+<a id="__codelineno-3-41" name="__codelineno-3-41"></a><span class="sd">        Do transformation if necessary</span>
+<a id="__codelineno-3-42" name="__codelineno-3-42"></a><span class="sd">        Return a `sample` / `item`, meaning an input and target pair.</span>
+<a id="__codelineno-3-43" name="__codelineno-3-43"></a><span class="sd">        For efficiency usually you do the actual loading here and not in the __init__.</span>
+<a id="__codelineno-3-44" name="__codelineno-3-44"></a><span class="sd">            The Dataloader uses multiple processes to call __getitem__</span>
+<a id="__codelineno-3-45" name="__codelineno-3-45"></a><span class="sd">            (With larger amounts of RAM you can preload images)</span>
+<a id="__codelineno-3-46" name="__codelineno-3-46"></a><span class="sd">        Return type and format will vary from person to person, I prefer using a NamedTuple. </span>
+<a id="__codelineno-3-47" name="__codelineno-3-47"></a><span class="sd">            I find this to be the most compatible with the Dataloader default Collation,</span>
+<a id="__codelineno-3-48" name="__codelineno-3-48"></a><span class="sd">            also it&#39;s readable: you can access with `data.image` and `data.target` instead of `data[0]` and `data[1]` (which you can also still do)</span>
+<a id="__codelineno-3-49" name="__codelineno-3-49"></a><span class="sd">        Other Return types are typically plain tuple (usually input first, target second), and dictionary</span>
+<a id="__codelineno-3-50" name="__codelineno-3-50"></a><span class="sd">            dictionary and namedtuple allow you to expand your targets for doing more complex tasks (e.x. bounding boxes and segmentations and class labels)</span>
+<a id="__codelineno-3-51" name="__codelineno-3-51"></a><span class="sd">            without having tuples with many numbered elements</span>
+<a id="__codelineno-3-52" name="__codelineno-3-52"></a><span class="sd">        &quot;&quot;&quot;</span>
+<a id="__codelineno-3-53" name="__codelineno-3-53"></a>        <span class="n">screenshot_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_list</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+<a id="__codelineno-3-54" name="__codelineno-3-54"></a>        <span class="n">target_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_list</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+<a id="__codelineno-3-55" name="__codelineno-3-55"></a>
+<a id="__codelineno-3-56" name="__codelineno-3-56"></a>        <span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">screenshot_file</span><span class="p">)</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s1">&#39;RGB&#39;</span><span class="p">)</span>
+<a id="__codelineno-3-57" name="__codelineno-3-57"></a>        <span class="n">target</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">target_file</span><span class="p">)</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">)</span>
+<a id="__codelineno-3-58" name="__codelineno-3-58"></a>
+<a id="__codelineno-3-59" name="__codelineno-3-59"></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">:</span>
+<a id="__codelineno-3-60" name="__codelineno-3-60"></a>            <span class="n">image</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+<a id="__codelineno-3-61" name="__codelineno-3-61"></a>
+<a id="__codelineno-3-62" name="__codelineno-3-62"></a>        <span class="c1"># sample = {&#39;image&#39;: image, &#39;target&#39;: target}</span>
+<a id="__codelineno-3-63" name="__codelineno-3-63"></a>        <span class="k">return</span> <span class="n">Sample</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+<a id="__codelineno-3-64" name="__codelineno-3-64"></a>
+<a id="__codelineno-3-65" name="__codelineno-3-65"></a><span class="n">test_dataset</span> <span class="o">=</span> <span class="n">UIImageMaskDataset</span><span class="p">()</span>
+<a id="__codelineno-3-66" name="__codelineno-3-66"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created test Data: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">test_dataset</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span> 
+<a id="__codelineno-3-67" name="__codelineno-3-67"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Len: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">test_dataset</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-3-68" name="__codelineno-3-68"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Type of first item: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">test_dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="si">}</span><span class="s2">. &quot;</span><span class="p">)</span>
+<a id="__codelineno-3-69" name="__codelineno-3-69"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Type of first item.image: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">test_dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">image</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-3-70" name="__codelineno-3-70"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Type of first item.target: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">test_dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">target</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span></pre></div></td><td class="code"><div><pre><span></span><code>No transform on data, you probably need at least ToTensor()
+Created test Data: &lt;class &#39;__main__.UIImageMaskDataset&#39;&gt;.
+Len: 1
+Type of first item: &lt;class &#39;__main__.Sample&#39;&gt;. 
+Type of first item.image: &lt;class &#39;PIL.Image.Image&#39;&gt;
+Type of first item.target: &lt;class &#39;PIL.Image.Image&#39;&gt;
+</code></pre></div></td></tr></table></div>
+<h2 id="3-load-the-folder-into-a-dataset">3. Load the folder into a Dataset<a class="headerlink" href="#3-load-the-folder-into-a-dataset" title="Permanent link">🔗</a></h2>
+<p>Depending on your task you may not need to transform it at all (ex. a class name like 'cheese')</p>
+<p>In our case we need to make sure whatever we do to the Image we also do to the Target mask. Most importantly, we need to convert both from PIL images to Pytorch Tensors so that they can be ingested in the model / network.</p>
+<p>We'll also perform a resize, because reducing image size reduces the amount of data passing through the network and also to demonstrate Composing a chain of transforms</p>
+<p>We use transform <code>ToTensor()</code> from <a href="https://pytorch.org/docs/stable/torchvision/transforms.html">torchvision transforms</a> because it's the simplest conversion from PIL to Tensor. You usually want to do this last, depending on the other transforms of course</p>
+<p><strong>Always remember your target image!</strong></p>
+<p>But this function only takes one input... So we can either use the 'Functional' version or write our own class. We'll take the class route, which lets you chain more easily.</p>
+<p>If using random transforms on images and image targets make sure the same randomness is applied to both (you'll probably need to write your own transforms)</p>
+<p>In a more advanced case we can chain together more transforms like crops, flips, and rotations to vary the training data. Typically we don't test / validate on data with as many transforms though. </p>
+<p>One rather important transform we're ignoring for now is image normalization, which brings all of your dataset images within the same range using the entire dataset mean and standard deviation.</p>
+<p>Torchvision <code>ToTensor()</code> normalizes to a 0-1 scale which will keep our model's gradients in check. To go further we'd get the mean and std of our overfit image or dataset</p>
+<p><strong>NOTE</strong> many people import torchvision.transforms as T or similar. Feel free to do the same. I usually write my own transforms (ex. <code>input_target_transforms.py</code> for auto encoders, and import as <code>TT</code> or <code>Transforms</code> for clarity)</p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-4-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-4-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-4-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-4-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-4-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-4-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-4-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-4-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-4-10">10</a></span>
+<span class="normal"><a href="#__codelineno-4-11">11</a></span>
+<span class="normal"><a href="#__codelineno-4-12">12</a></span>
+<span class="normal"><a href="#__codelineno-4-13">13</a></span>
+<span class="normal"><a href="#__codelineno-4-14">14</a></span>
+<span class="normal"><a href="#__codelineno-4-15">15</a></span>
+<span class="normal"><a href="#__codelineno-4-16">16</a></span>
+<span class="normal"><a href="#__codelineno-4-17">17</a></span>
+<span class="normal"><a href="#__codelineno-4-18">18</a></span>
+<span class="normal"><a href="#__codelineno-4-19">19</a></span>
+<span class="normal"><a href="#__codelineno-4-20">20</a></span>
+<span class="normal"><a href="#__codelineno-4-21">21</a></span>
+<span class="normal"><a href="#__codelineno-4-22">22</a></span>
+<span class="normal"><a href="#__codelineno-4-23">23</a></span>
+<span class="normal"><a href="#__codelineno-4-24">24</a></span>
+<span class="normal"><a href="#__codelineno-4-25">25</a></span>
+<span class="normal"><a href="#__codelineno-4-26">26</a></span>
+<span class="normal"><a href="#__codelineno-4-27">27</a></span>
+<span class="normal"><a href="#__codelineno-4-28">28</a></span>
+<span class="normal"><a href="#__codelineno-4-29">29</a></span>
+<span class="normal"><a href="#__codelineno-4-30">30</a></span>
+<span class="normal"><a href="#__codelineno-4-31">31</a></span>
+<span class="normal"><a href="#__codelineno-4-32">32</a></span>
+<span class="normal"><a href="#__codelineno-4-33">33</a></span>
+<span class="normal"><a href="#__codelineno-4-34">34</a></span>
+<span class="normal"><a href="#__codelineno-4-35">35</a></span>
+<span class="normal"><a href="#__codelineno-4-36">36</a></span>
+<span class="normal"><a href="#__codelineno-4-37">37</a></span>
+<span class="normal"><a href="#__codelineno-4-38">38</a></span>
+<span class="normal"><a href="#__codelineno-4-39">39</a></span>
+<span class="normal"><a href="#__codelineno-4-40">40</a></span>
+<span class="normal"><a href="#__codelineno-4-41">41</a></span>
+<span class="normal"><a href="#__codelineno-4-42">42</a></span>
+<span class="normal"><a href="#__codelineno-4-43">43</a></span>
+<span class="normal"><a href="#__codelineno-4-44">44</a></span>
+<span class="normal"><a href="#__codelineno-4-45">45</a></span>
+<span class="normal"><a href="#__codelineno-4-46">46</a></span>
+<span class="normal"><a href="#__codelineno-4-47">47</a></span>
+<span class="normal"><a href="#__codelineno-4-48">48</a></span>
+<span class="normal"><a href="#__codelineno-4-49">49</a></span>
+<span class="normal"><a href="#__codelineno-4-50">50</a></span>
+<span class="normal"><a href="#__codelineno-4-51">51</a></span>
+<span class="normal"><a href="#__codelineno-4-52">52</a></span>
+<span class="normal"><a href="#__codelineno-4-53">53</a></span>
+<span class="normal"><a href="#__codelineno-4-54">54</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a><span class="k">class</span> <span class="nc">ImageTargetToTensor</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2"></a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3"></a>        <span class="c1"># Transform Classes built with __call__ act kind of like a function once you assign an instance to a variable</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4"></a>        <span class="n">tv_tt</span> <span class="o">=</span> <span class="n">torchvision</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">()</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5"></a>        <span class="c1"># transform image to tensor with torchvision transform</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6"></a>        <span class="n">image</span> <span class="o">=</span> <span class="n">tv_tt</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7"></a>        <span class="c1"># same with target</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8"></a>        <span class="n">target</span> <span class="o">=</span> <span class="n">tv_tt</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9"></a>        <span class="k">return</span> <span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10"></a>
+<a id="__codelineno-4-11" name="__codelineno-4-11"></a>
+<a id="__codelineno-4-12" name="__codelineno-4-12"></a><span class="k">class</span> <span class="nc">ImageTargetResize</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<a id="__codelineno-4-13" name="__codelineno-4-13"></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+<a id="__codelineno-4-14" name="__codelineno-4-14"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-4-15" name="__codelineno-4-15"></a><span class="sd">        size: int will reduce shorter side to size param</span>
+<a id="__codelineno-4-16" name="__codelineno-4-16"></a><span class="sd">             tuple of (int, int) will resize to (height, width) from size param</span>
+<a id="__codelineno-4-17" name="__codelineno-4-17"></a><span class="sd">        returns tuple of (resized_image, resized_target)</span>
+<a id="__codelineno-4-18" name="__codelineno-4-18"></a><span class="sd">        &quot;&quot;&quot;</span>
+<a id="__codelineno-4-19" name="__codelineno-4-19"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">size</span>
+<a id="__codelineno-4-20" name="__codelineno-4-20"></a>
+<a id="__codelineno-4-21" name="__codelineno-4-21"></a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+<a id="__codelineno-4-22" name="__codelineno-4-22"></a>        <span class="n">resize_transform</span> <span class="o">=</span> <span class="n">torchvision</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">Resize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+<a id="__codelineno-4-23" name="__codelineno-4-23"></a>        <span class="n">image</span> <span class="o">=</span> <span class="n">resize_transform</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+<a id="__codelineno-4-24" name="__codelineno-4-24"></a>        <span class="n">target</span> <span class="o">=</span> <span class="n">resize_transform</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+<a id="__codelineno-4-25" name="__codelineno-4-25"></a>        <span class="k">return</span> <span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+<a id="__codelineno-4-26" name="__codelineno-4-26"></a>
+<a id="__codelineno-4-27" name="__codelineno-4-27"></a><span class="k">class</span> <span class="nc">ImageTargetCompose</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<a id="__codelineno-4-28" name="__codelineno-4-28"></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transforms</span><span class="p">):</span>
+<a id="__codelineno-4-29" name="__codelineno-4-29"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-4-30" name="__codelineno-4-30"></a><span class="sd">        transforms: list of transforms that take in image and target and return tuples of (transformed_image, transformed_target)</span>
+<a id="__codelineno-4-31" name="__codelineno-4-31"></a><span class="sd">        returns tuple of (image, target) after going through each transform in list</span>
+<a id="__codelineno-4-32" name="__codelineno-4-32"></a><span class="sd">        &quot;&quot;&quot;</span>
+<a id="__codelineno-4-33" name="__codelineno-4-33"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">transforms</span> <span class="o">=</span> <span class="n">transforms</span>
+<a id="__codelineno-4-34" name="__codelineno-4-34"></a>
+<a id="__codelineno-4-35" name="__codelineno-4-35"></a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+<a id="__codelineno-4-36" name="__codelineno-4-36"></a>        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">transforms</span><span class="p">:</span>
+<a id="__codelineno-4-37" name="__codelineno-4-37"></a>            <span class="n">image</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="n">t</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+<a id="__codelineno-4-38" name="__codelineno-4-38"></a>        <span class="k">return</span> <span class="n">image</span><span class="p">,</span> <span class="n">target</span>
+<a id="__codelineno-4-39" name="__codelineno-4-39"></a>
+<a id="__codelineno-4-40" name="__codelineno-4-40"></a><span class="n">training_transform</span> <span class="o">=</span> <span class="n">ImageTargetCompose</span><span class="p">([</span>
+<a id="__codelineno-4-41" name="__codelineno-4-41"></a>    <span class="n">ImageTargetResize</span><span class="p">((</span><span class="mi">256</span><span class="p">,</span><span class="mi">256</span><span class="p">)),</span>
+<a id="__codelineno-4-42" name="__codelineno-4-42"></a>    <span class="n">ImageTargetToTensor</span><span class="p">()</span>
+<a id="__codelineno-4-43" name="__codelineno-4-43"></a><span class="p">])</span>
+<a id="__codelineno-4-44" name="__codelineno-4-44"></a>
+<a id="__codelineno-4-45" name="__codelineno-4-45"></a><span class="n">UI_DATASET</span> <span class="o">=</span> <span class="n">UIImageMaskDataset</span><span class="p">(</span><span class="n">data_dir</span><span class="o">=</span><span class="s2">&quot;./test_inputs&quot;</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">training_transform</span><span class="p">)</span>
+<a id="__codelineno-4-46" name="__codelineno-4-46"></a><span class="n">sample</span> <span class="o">=</span> <span class="n">UI_DATASET</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<a id="__codelineno-4-47" name="__codelineno-4-47"></a>
+<a id="__codelineno-4-48" name="__codelineno-4-48"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created Ui dataset: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">UI_DATASET</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span> 
+<a id="__codelineno-4-49" name="__codelineno-4-49"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Len: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">UI_DATASET</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-4-50" name="__codelineno-4-50"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Type of first item: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span><span class="si">}</span><span class="s2">. len </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span><span class="si">}</span><span class="s2"> &quot;</span><span class="p">)</span>
+<a id="__codelineno-4-51" name="__codelineno-4-51"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;item.image  Type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">image</span><span class="p">)</span><span class="si">}</span><span class="s2">. Datatype: </span><span class="si">{</span><span class="n">sample</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+<a id="__codelineno-4-52" name="__codelineno-4-52"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;            Shape: </span><span class="si">{</span><span class="n">sample</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, Extrema: (</span><span class="si">{</span><span class="n">sample</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">sample</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">}</span><span class="s2">), Unique: (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span><span class="si">}</span><span class="s2"> unique colors)&quot;</span><span class="p">)</span>
+<a id="__codelineno-4-53" name="__codelineno-4-53"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;item.target Type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">target</span><span class="p">)</span><span class="si">}</span><span class="s2">. Datatype: </span><span class="si">{</span><span class="n">sample</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+<a id="__codelineno-4-54" name="__codelineno-4-54"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;            Shape: </span><span class="si">{</span><span class="n">sample</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, Extrema: (</span><span class="si">{</span><span class="n">sample</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">sample</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">}</span><span class="s2">), Unique: (</span><span class="si">{</span><span class="n">sample</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span></pre></div></td><td class="code"><div><pre><span></span><code>Created Ui dataset: &lt;class &#39;__main__.UIImageMaskDataset&#39;&gt;.
+Len: 1
+Type of first item: &lt;class &#39;__main__.Sample&#39;&gt;. len 2 
+item.image  Type: &lt;class &#39;torch.Tensor&#39;&gt;. Datatype: torch.float32.
+            Shape: torch.Size([3, 256, 256]), Extrema: (0.0, 1.0), Unique: (247 unique colors)
+item.target Type: &lt;class &#39;torch.Tensor&#39;&gt;. Datatype: torch.float32.
+            Shape: torch.Size([1, 256, 256]), Extrema: (0.0, 1.0), Unique: (tensor([0., 1.]))
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-5-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-5-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-5-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-5-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-5-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-5-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-5-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-5-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-5-10">10</a></span>
+<span class="normal"><a href="#__codelineno-5-11">11</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1"></a><span class="c1"># As a double check, we should make sure our transforms do what we intend, especially if rotating / cropping image and target</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2"></a><span class="c1"># We need to jump through one hoop by making the target seem like an RGB image to let torchvision see it</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3"></a><span class="c1">#  We also need to jump through another hoop to display a torch tensor as an image, using torchvision transforms ToPILImage works, numpy and matplotlib also work</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4"></a>
+<a id="__codelineno-5-5" name="__codelineno-5-5"></a><span class="n">viz_image</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">image</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6"></a><span class="n">viz_target</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">target</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7"></a><span class="n">viz_target</span> <span class="o">=</span> <span class="n">viz_target</span><span class="o">.</span><span class="n">repeat</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8"></a><span class="nb">print</span><span class="p">(</span><span class="n">viz_target</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9"></a><span class="n">grid</span> <span class="o">=</span> <span class="n">torchvision</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">make_grid</span><span class="p">([</span><span class="n">viz_image</span><span class="p">,</span> <span class="n">viz_target</span><span class="p">])</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10"></a><span class="n">pil_grid</span> <span class="o">=</span> <span class="n">torchvision</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">ToPILImage</span><span class="p">()(</span><span class="n">grid</span><span class="p">)</span>
+<a id="__codelineno-5-11" name="__codelineno-5-11"></a><span class="n">pil_grid</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>torch.Size([3, 256, 256])
+</code></pre></div></td></tr></table></div>
+<p><img alt="png" src="/images/load_segmentation_data_into_pytorch_files/load_segmentation_data_into_pytorch_9_1.png" /></p>
+<h2 id="4-load-into-dataloader">4. Load into DataLoader<a class="headerlink" href="#4-load-into-dataloader" title="Permanent link">🔗</a></h2>
+<p>This will be the last part we cover, as after this is running training samples through a model!</p>
+<p>The Pytorch Dataloader works pretty efficiently and takes a lot of effort out of batching your samples when looping through your dataset.</p>
+<p>In most cases you can use <code>shuffle=True</code> on training and <code>shuffle=False</code> on validation / test and not worry about a sampler / batch sampler.</p>
+<p><code>drop_last=True</code> will make it so you end on the last full batch of data (ex if you have 999 samples and batch size of 4 then the last batch could only have 3 samples, this flag ignores that un-full batch of 3)</p>
+<p><code>batch_size</code> tends to depend on the size of your GPU(s), <code>num_workers</code> on the other hand scales with CPU processor cores that you have (probably 4, 2, maybe 1, maybe 8, if you have 16 you probably know; depends on your machine).</p>
+<p>The dataloader gives results batched along a new dimension, meaning each tensor representing a whole batch of images has dimensions like this: <code>[ Batch_Size, Channels, Height, Width ]</code>. It does this using the <code>collate function</code>, which I generally leave default and is why I return tuples in Dataset implementations</p>
+<p><strong>NOTE</strong> You generally only want to touch your dataloaders (i.e. get a batch from them) when you are looping through training, as they are implemented as generators, which will continue sampling forward by default whenever you get a <code>next()</code> item from it. In other words you can't get a specific index from them (you always can from the underlying dataset though), and if you access the first sample then the training may be a bit messed up because it will start from the second sample .</p>
+<p><a href="https://pytorch.org/docs/stable/data.html#torch.utils.data.DataLoader">Dataloader Documentation</a></p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-6-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-6-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-6-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-6-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-6-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-6-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-6-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-6-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-6-10">10</a></span>
+<span class="normal"><a href="#__codelineno-6-11">11</a></span>
+<span class="normal"><a href="#__codelineno-6-12">12</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1"></a><span class="n">TRAIN_DATALOADER</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">UI_DATASET</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">drop_last</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Length of Train loader: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">TRAIN_DATALOADER</span><span class="p">)</span><span class="si">}</span><span class="s2"> batches&quot;</span><span class="p">)</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3"></a>
+<a id="__codelineno-6-4" name="__codelineno-6-4"></a><span class="k">for</span> <span class="n">batch_num</span><span class="p">,</span> <span class="n">sample</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">TRAIN_DATALOADER</span><span class="p">):</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;batch number: </span><span class="si">{</span><span class="n">batch_num</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6"></a>    <span class="n">batch_images</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">image</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7"></a>    <span class="n">batch_targets</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">target</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8"></a>    <span class="c1"># one liner: batch_images, batch_targets = sample</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;batch images  Type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">batch_images</span><span class="p">)</span><span class="si">}</span><span class="s2">. Datatype: </span><span class="si">{</span><span class="n">batch_images</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;            Shape: </span><span class="si">{</span><span class="n">batch_images</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, Extrema: (</span><span class="si">{</span><span class="n">batch_images</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">batch_images</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">}</span><span class="s2">), Unique: (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">batch_images</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span><span class="si">}</span><span class="s2"> unique colors)&quot;</span><span class="p">)</span>
+<a id="__codelineno-6-11" name="__codelineno-6-11"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;batch targets Type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">batch_targets</span><span class="p">)</span><span class="si">}</span><span class="s2">. Datatype: </span><span class="si">{</span><span class="n">batch_targets</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+<a id="__codelineno-6-12" name="__codelineno-6-12"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;            Shape: </span><span class="si">{</span><span class="n">batch_targets</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, Extrema: (</span><span class="si">{</span><span class="n">batch_targets</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">batch_targets</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">}</span><span class="s2">), Unique: (</span><span class="si">{</span><span class="n">batch_targets</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span></pre></div></td><td class="code"><div><pre><span></span><code>Length of Train loader: 1 batches
+batch number: 1
+batch images  Type: &lt;class &#39;torch.Tensor&#39;&gt;. Datatype: torch.float32.
+            Shape: torch.Size([1, 3, 256, 256]), Extrema: (0.0, 1.0), Unique: (247 unique colors)
+batch targets Type: &lt;class &#39;torch.Tensor&#39;&gt;. Datatype: torch.float32.
+            Shape: torch.Size([1, 1, 256, 256]), Extrema: (0.0, 1.0), Unique: (tensor([0., 1.]))
+</code></pre></div></td></tr></table></div>
+<h2 id="5-bonus-overfit-dataset">5. BONUS: Overfit Dataset<a class="headerlink" href="#5-bonus-overfit-dataset" title="Permanent link">🔗</a></h2>
+<p>We've seen how to load and transform images, and this will almost definitely work with a larger folder of images, and a larger batch size, but lets make sure.</p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-7-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-7-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-7-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-7-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-7-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-7-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-7-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-7-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-7-10">10</a></span>
+<span class="normal"><a href="#__codelineno-7-11">11</a></span>
+<span class="normal"><a href="#__codelineno-7-12">12</a></span>
+<span class="normal"><a href="#__codelineno-7-13">13</a></span>
+<span class="normal"><a href="#__codelineno-7-14">14</a></span>
+<span class="normal"><a href="#__codelineno-7-15">15</a></span>
+<span class="normal"><a href="#__codelineno-7-16">16</a></span>
+<span class="normal"><a href="#__codelineno-7-17">17</a></span>
+<span class="normal"><a href="#__codelineno-7-18">18</a></span>
+<span class="normal"><a href="#__codelineno-7-19">19</a></span>
+<span class="normal"><a href="#__codelineno-7-20">20</a></span>
+<span class="normal"><a href="#__codelineno-7-21">21</a></span>
+<span class="normal"><a href="#__codelineno-7-22">22</a></span>
+<span class="normal"><a href="#__codelineno-7-23">23</a></span>
+<span class="normal"><a href="#__codelineno-7-24">24</a></span>
+<span class="normal"><a href="#__codelineno-7-25">25</a></span>
+<span class="normal"><a href="#__codelineno-7-26">26</a></span>
+<span class="normal"><a href="#__codelineno-7-27">27</a></span>
+<span class="normal"><a href="#__codelineno-7-28">28</a></span>
+<span class="normal"><a href="#__codelineno-7-29">29</a></span>
+<span class="normal"><a href="#__codelineno-7-30">30</a></span>
+<span class="normal"><a href="#__codelineno-7-31">31</a></span>
+<span class="normal"><a href="#__codelineno-7-32">32</a></span>
+<span class="normal"><a href="#__codelineno-7-33">33</a></span>
+<span class="normal"><a href="#__codelineno-7-34">34</a></span>
+<span class="normal"><a href="#__codelineno-7-35">35</a></span>
+<span class="normal"><a href="#__codelineno-7-36">36</a></span>
+<span class="normal"><a href="#__codelineno-7-37">37</a></span>
+<span class="normal"><a href="#__codelineno-7-38">38</a></span>
+<span class="normal"><a href="#__codelineno-7-39">39</a></span>
+<span class="normal"><a href="#__codelineno-7-40">40</a></span>
+<span class="normal"><a href="#__codelineno-7-41">41</a></span>
+<span class="normal"><a href="#__codelineno-7-42">42</a></span>
+<span class="normal"><a href="#__codelineno-7-43">43</a></span>
+<span class="normal"><a href="#__codelineno-7-44">44</a></span>
+<span class="normal"><a href="#__codelineno-7-45">45</a></span>
+<span class="normal"><a href="#__codelineno-7-46">46</a></span>
+<span class="normal"><a href="#__codelineno-7-47">47</a></span>
+<span class="normal"><a href="#__codelineno-7-48">48</a></span>
+<span class="normal"><a href="#__codelineno-7-49">49</a></span>
+<span class="normal"><a href="#__codelineno-7-50">50</a></span>
+<span class="normal"><a href="#__codelineno-7-51">51</a></span>
+<span class="normal"><a href="#__codelineno-7-52">52</a></span>
+<span class="normal"><a href="#__codelineno-7-53">53</a></span>
+<span class="normal"><a href="#__codelineno-7-54">54</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1"></a><span class="k">class</span> <span class="nc">OverfitDataset</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="p">):</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2"></a>
+<a id="__codelineno-7-3" name="__codelineno-7-3"></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_file</span><span class="o">=</span><span class="s1">&#39;./test_inputs/1_input.png&#39;</span><span class="p">,</span> <span class="n">target_file</span><span class="o">=</span><span class="s1">&#39;./test_inputs/1_target.jpg&#39;</span><span class="p">,</span> <span class="n">number_of_samples</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s1">&#39;RGB&#39;</span><span class="p">)</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">target_file</span><span class="p">)</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">)</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6"></a>
+<a id="__codelineno-7-7" name="__codelineno-7-7"></a>        <span class="c1"># For use in methods</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">=</span> <span class="n">number_of_samples</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">transform</span> <span class="o">=</span> <span class="n">transform</span>
+<a id="__codelineno-7-10" name="__codelineno-7-10"></a>
+<a id="__codelineno-7-11" name="__codelineno-7-11"></a>        <span class="c1"># Basic Error checking, just for testing</span>
+<a id="__codelineno-7-12" name="__codelineno-7-12"></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-7-13" name="__codelineno-7-13"></a>            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No transform on data, you probably need at least ToTensor()&#39;</span><span class="p">)</span>
+<a id="__codelineno-7-14" name="__codelineno-7-14"></a>
+<a id="__codelineno-7-15" name="__codelineno-7-15"></a>    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-7-16" name="__codelineno-7-16"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span>
+<a id="__codelineno-7-17" name="__codelineno-7-17"></a>
+<a id="__codelineno-7-18" name="__codelineno-7-18"></a>    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+<a id="__codelineno-7-19" name="__codelineno-7-19"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-7-20" name="__codelineno-7-20"></a><span class="sd">        We apply transform in getitem in case you want to do some random transforms in the overfit training. </span>
+<a id="__codelineno-7-21" name="__codelineno-7-21"></a><span class="sd">            You could just do the transform originally in init for the overfit case</span>
+<a id="__codelineno-7-22" name="__codelineno-7-22"></a><span class="sd">            Shouldn&#39;t be a hit to performance when just using ToTensor anyway</span>
+<a id="__codelineno-7-23" name="__codelineno-7-23"></a><span class="sd">        &quot;&quot;&quot;</span>
+<a id="__codelineno-7-24" name="__codelineno-7-24"></a>        <span class="n">image</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">)</span>
+<a id="__codelineno-7-25" name="__codelineno-7-25"></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">:</span>
+<a id="__codelineno-7-26" name="__codelineno-7-26"></a>            <span class="n">image</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+<a id="__codelineno-7-27" name="__codelineno-7-27"></a>
+<a id="__codelineno-7-28" name="__codelineno-7-28"></a>        <span class="c1"># sample = {&#39;image&#39;: image, &#39;target&#39;: target}</span>
+<a id="__codelineno-7-29" name="__codelineno-7-29"></a>        <span class="k">return</span> <span class="n">Sample</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+<a id="__codelineno-7-30" name="__codelineno-7-30"></a>
+<a id="__codelineno-7-31" name="__codelineno-7-31"></a><span class="n">overfit_dataset</span> <span class="o">=</span> <span class="n">OverfitDataset</span><span class="p">(</span><span class="n">input_file</span><span class="o">=</span><span class="s1">&#39;./test_inputs/1_input.png&#39;</span><span class="p">,</span> <span class="n">target_file</span><span class="o">=</span><span class="s1">&#39;./test_inputs/1_target.jpg&#39;</span><span class="p">,</span> <span class="n">number_of_samples</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">training_transform</span><span class="p">)</span>
+<a id="__codelineno-7-32" name="__codelineno-7-32"></a><span class="n">sample</span> <span class="o">=</span> <span class="n">overfit_dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<a id="__codelineno-7-33" name="__codelineno-7-33"></a>
+<a id="__codelineno-7-34" name="__codelineno-7-34"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created overfit dataset: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">overfit_dataset</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span> 
+<a id="__codelineno-7-35" name="__codelineno-7-35"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Len: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">overfit_dataset</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-7-36" name="__codelineno-7-36"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Type of first item: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span><span class="si">}</span><span class="s2">. len </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span><span class="si">}</span><span class="s2"> &quot;</span><span class="p">)</span>
+<a id="__codelineno-7-37" name="__codelineno-7-37"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;item.image  Type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">image</span><span class="p">)</span><span class="si">}</span><span class="s2">. Datatype: </span><span class="si">{</span><span class="n">sample</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+<a id="__codelineno-7-38" name="__codelineno-7-38"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;            Shape: </span><span class="si">{</span><span class="n">sample</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, Extrema: (</span><span class="si">{</span><span class="n">sample</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">sample</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">}</span><span class="s2">), Unique: (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span><span class="si">}</span><span class="s2"> unique colors)&quot;</span><span class="p">)</span>
+<a id="__codelineno-7-39" name="__codelineno-7-39"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;item.target Type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">target</span><span class="p">)</span><span class="si">}</span><span class="s2">. Datatype: </span><span class="si">{</span><span class="n">sample</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+<a id="__codelineno-7-40" name="__codelineno-7-40"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;            Shape: </span><span class="si">{</span><span class="n">sample</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, Extrema: (</span><span class="si">{</span><span class="n">sample</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">sample</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">}</span><span class="s2">), Unique: (</span><span class="si">{</span><span class="n">sample</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+<a id="__codelineno-7-41" name="__codelineno-7-41"></a>
+<a id="__codelineno-7-42" name="__codelineno-7-42"></a><span class="n">OVERFIT_LOADER</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">overfit_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">drop_last</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-7-43" name="__codelineno-7-43"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Length of overfit loader: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">OVERFIT_LOADER</span><span class="p">)</span><span class="si">}</span><span class="s2"> batches&quot;</span><span class="p">)</span>
+<a id="__codelineno-7-44" name="__codelineno-7-44"></a><span class="k">for</span> <span class="n">batch_num</span><span class="p">,</span> <span class="n">sample</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">OVERFIT_LOADER</span><span class="p">):</span>
+<a id="__codelineno-7-45" name="__codelineno-7-45"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;----------------------------------&quot;</span><span class="p">)</span>
+<a id="__codelineno-7-46" name="__codelineno-7-46"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;batch number: </span><span class="si">{</span><span class="n">batch_num</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-7-47" name="__codelineno-7-47"></a>    <span class="n">batch_images</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">image</span>
+<a id="__codelineno-7-48" name="__codelineno-7-48"></a>    <span class="n">batch_targets</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">target</span>
+<a id="__codelineno-7-49" name="__codelineno-7-49"></a>    <span class="c1"># one liner: batch_images, batch_targets = sample</span>
+<a id="__codelineno-7-50" name="__codelineno-7-50"></a>
+<a id="__codelineno-7-51" name="__codelineno-7-51"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;batch images  Type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">batch_images</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+<a id="__codelineno-7-52" name="__codelineno-7-52"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;            Shape: </span><span class="si">{</span><span class="n">batch_images</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-7-53" name="__codelineno-7-53"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;batch targets Type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">batch_targets</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+<a id="__codelineno-7-54" name="__codelineno-7-54"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;            Shape: </span><span class="si">{</span><span class="n">batch_targets</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span></pre></div></td><td class="code"><div><pre><span></span><code>Created overfit dataset: &lt;class &#39;__main__.OverfitDataset&#39;&gt;.
+Len: 100
+Type of first item: &lt;class &#39;__main__.Sample&#39;&gt;. len 2 
+item.image  Type: &lt;class &#39;torch.Tensor&#39;&gt;. Datatype: torch.float32.
+            Shape: torch.Size([3, 256, 256]), Extrema: (0.0, 1.0), Unique: (247 unique colors)
+item.target Type: &lt;class &#39;torch.Tensor&#39;&gt;. Datatype: torch.float32.
+            Shape: torch.Size([1, 256, 256]), Extrema: (0.0, 1.0), Unique: (tensor([0., 1.]))
+Length of overfit loader: 6 batches
+----------------------------------
+batch number: 1
+batch images  Type: &lt;class &#39;torch.Tensor&#39;&gt;.
+            Shape: torch.Size([16, 3, 256, 256])
+batch targets Type: &lt;class &#39;torch.Tensor&#39;&gt;.
+            Shape: torch.Size([16, 1, 256, 256])
+----------------------------------
+batch number: 2
+batch images  Type: &lt;class &#39;torch.Tensor&#39;&gt;.
+            Shape: torch.Size([16, 3, 256, 256])
+batch targets Type: &lt;class &#39;torch.Tensor&#39;&gt;.
+            Shape: torch.Size([16, 1, 256, 256])
+----------------------------------
+batch number: 3
+batch images  Type: &lt;class &#39;torch.Tensor&#39;&gt;.
+            Shape: torch.Size([16, 3, 256, 256])
+batch targets Type: &lt;class &#39;torch.Tensor&#39;&gt;.
+            Shape: torch.Size([16, 1, 256, 256])
+----------------------------------
+batch number: 4
+batch images  Type: &lt;class &#39;torch.Tensor&#39;&gt;.
+            Shape: torch.Size([16, 3, 256, 256])
+batch targets Type: &lt;class &#39;torch.Tensor&#39;&gt;.
+            Shape: torch.Size([16, 1, 256, 256])
+----------------------------------
+batch number: 5
+batch images  Type: &lt;class &#39;torch.Tensor&#39;&gt;.
+            Shape: torch.Size([16, 3, 256, 256])
+batch targets Type: &lt;class &#39;torch.Tensor&#39;&gt;.
+            Shape: torch.Size([16, 1, 256, 256])
+----------------------------------
+batch number: 6
+batch images  Type: &lt;class &#39;torch.Tensor&#39;&gt;.
+            Shape: torch.Size([16, 3, 256, 256])
+batch targets Type: &lt;class &#39;torch.Tensor&#39;&gt;.
+            Shape: torch.Size([16, 1, 256, 256])
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1"></a>
+</code></pre></div></td></tr></table></div>
+
+  <hr>
+<div class="md-source-file">
+  <small>
+    
+      Last update:
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">June 7, 2023</span>
+      
+        <br>
+        Created:
+        <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">June 7, 2023</span>
+      
+    
+  </small>
+</div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <a href="#" class="md-top md-icon" data-md-component="top" hidden>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+            Back to top
+          </a>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../computer-vision-part-1/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Computer Vision Part 1: Loading Images with Python" rel="prev">
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  Previous
+                </span>
+                Computer Vision Part 1: Loading Images with Python
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../computer-vision-part-3/" class="md-footer__link md-footer__link--next" aria-label="Next: Computer Vision Part 3: Train U-Net Architecture to predict UI segmentation" rel="next">
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  Next
+                </span>
+                Computer Vision Part 3: Train U-Net Architecture to predict UI segmentation
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2020 - 2023 Gerard Bentley
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+      
+      
+    
+    <a href="https://gerardbentley.com/@gar" target="_blank" rel="noopener" title="gerardbentley.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M433 179.11c0-97.2-63.71-125.7-63.71-125.7-62.52-28.7-228.56-28.4-290.48 0 0 0-63.72 28.5-63.72 125.7 0 115.7-6.6 259.4 105.63 289.1 40.51 10.7 75.32 13 103.33 11.4 50.81-2.8 79.32-18.1 79.32-18.1l-1.7-36.9s-36.31 11.4-77.12 10.1c-40.41-1.4-83-4.4-89.63-54a102.54 102.54 0 0 1-.9-13.9c85.63 20.9 158.65 9.1 178.75 6.7 56.12-6.7 105-41.3 111.23-72.9 9.8-49.8 9-121.5 9-121.5zm-75.12 125.2h-46.63v-114.2c0-49.7-64-51.6-64 6.9v62.5h-46.33V197c0-58.5-64-56.6-64-6.9v114.2H90.19c0-122.1-5.2-147.9 18.41-175 25.9-28.9 79.82-30.8 103.83 6.1l11.6 19.5 11.6-19.5c24.11-37.1 78.12-34.8 103.83-6.1 23.71 27.3 18.4 53 18.4 175z"/></svg>
+    </a>
+  
+    
+    
+      
+      
+    
+    <a href="https://twitter.com/garsbar35plus" target="_blank" rel="noopener" title="twitter.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+    </a>
+  
+    
+    
+      
+      
+    
+    <a href="https://github.com/gerardrbentley" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+      
+      
+    
+    <a href="https://www.linkedin.com/in/gerardrbentley/" target="_blank" rel="noopener" title="www.linkedin.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.footer", "navigation.tracking", "toc.follow", "search.suggest", "search.highlight", "search.share", "header.autohide"], "search": "../../assets/javascripts/workers/search.12658920.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.5cf534bf.min.js"></script>
+      
+    
+  </body>
+</html>

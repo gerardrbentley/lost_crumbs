@@ -1,0 +1,2687 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Beginner friendly guide to viewing images in jupyter notebooks, this will set us up for creating image masks in Part 2. Part 1 of Step-by-Step Image Segmentation with Python. (Part 2 coming soon)">
+      
+      
+      
+        <link rel="canonical" href="https://home.gerardbentley.com/blog/computer-vision-part-1/">
+      
+      
+        <link rel="prev" href="../brain-dump-2022/">
+      
+      
+        <link rel="next" href="../computer-vision-part-2/">
+      
+      <link rel="icon" href="../../images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.0.2">
+    
+    
+      
+        <title>Computer Vision Part 1: Loading Images with Python - Lost Crumbs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.f56500e0.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.2505c338.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/youtube.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+      
+        <meta  property="og:type"  content="website" >
+      
+        <meta  property="og:title"  content="Computer Vision Part 1: Loading Images with Python - Lost Crumbs" >
+      
+        <meta  property="og:description"  content="Beginner friendly guide to viewing images in jupyter notebooks, this will set us up for creating image masks in Part 2. Part 1 of Step-by-Step Image Segmentation with Python. (Part 2 coming soon)" >
+      
+        <meta  property="og:image"  content="https://home.gerardbentley.com/assets/images/social/blog/computer-vision-part-1.png" >
+      
+        <meta  property="og:image:type"  content="image/png" >
+      
+        <meta  property="og:image:width"  content="1200" >
+      
+        <meta  property="og:image:height"  content="630" >
+      
+        <meta  property="og:url"  content="https://home.gerardbentley.com/blog/computer-vision-part-1/" >
+      
+        <meta  name="twitter:card"  content="summary_large_image" >
+      
+        <meta  name="twitter:title"  content="Computer Vision Part 1: Loading Images with Python - Lost Crumbs" >
+      
+        <meta  name="twitter:description"  content="Beginner friendly guide to viewing images in jupyter notebooks, this will set us up for creating image masks in Part 2. Part 1 of Step-by-Step Image Segmentation with Python. (Part 2 coming soon)" >
+      
+        <meta  name="twitter:image"  content="https://home.gerardbentley.com/assets/images/social/blog/computer-vision-part-1.png" >
+      
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#computer-vision-part-1-loading-images-with-python" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Lost Crumbs" class="md-header__button md-logo" aria-label="Lost Crumbs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2c5.5 0 10 3.36 10 7.5 0 1.69-.74 3.25-2 4.5v8H4v-8c-1.26-1.25-2-2.81-2-4.5C2 5.36 6.5 2 12 2M8 18h4v-4H8v4Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Lost Crumbs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Computer Vision Part 1: Loading Images with Python
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent=""  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"/></svg>
+            </label>
+          
+        
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent=""  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08Z"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gerardrbentley/lost_crumbs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    gerardrbentley/lost_crumbs
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../.." class="md-tabs__link">
+      Home
+    </a>
+  </li>
+
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../" class="md-tabs__link md-tabs__link--active">
+        Blog
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../guides/" class="md-tabs__link">
+        Guides
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../resources/" class="md-tabs__link">
+        Resources
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../setups/" class="md-tabs__link">
+        Setups
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../tags/" class="md-tabs__link">
+      Tags
+    </a>
+  </li>
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Lost Crumbs" class="md-nav__button md-logo" aria-label="Lost Crumbs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2c5.5 0 10 3.36 10 7.5 0 1.69-.74 3.25-2 4.5v8H4v-8c-1.26-1.25-2-2.81-2-4.5C2 5.36 6.5 2 12 2M8 18h4v-4H8v4Z"/></svg>
+
+    </a>
+    Lost Crumbs
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gerardrbentley/lost_crumbs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    gerardrbentley/lost_crumbs
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
+      
+      
+      
+        
+          
+            
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../">Blog</a>
+          
+            <label for="__nav_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="Blog" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Blog
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bottle-htmx-streamlit/" class="md-nav__link">
+        Bottle + HTMX vs Streamlit
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../brain-dump-2022/" class="md-nav__link">
+        Brain Dump 2022
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Computer Vision Part 1: Loading Images with Python
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Computer Vision Part 1: Loading Images with Python
+      </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="Page Index">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Page Index
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-import-and-inline-setup" class="md-nav__link">
+    1. Import and inline setup
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-fetching-some-image-files" class="md-nav__link">
+    2. Fetching some image files
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-use-opencv-to-load-image-files-into-numpy-ndarrays" class="md-nav__link">
+    3. Use OpenCV to Load image files into numpy ndarrays
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-dislpay-a-single-image-using-matplotlib" class="md-nav__link">
+    4. Dislpay a single Image using Matplotlib
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-opencv-color-caveat" class="md-nav__link">
+    5. OpenCV Color Caveat
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-displaying-multiple-images-with-matplotlib" class="md-nav__link">
+    6. Displaying multiple Images with Matplotlib
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-matplotlib-grayscale-color-caveat" class="md-nav__link">
+    7. Matplotlib Grayscale Color Caveat
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bonuses" class="md-nav__link">
+    Bonuses!
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-function-for-plotting-image-changes-on-multiple-images-in-a-grid" class="md-nav__link">
+    8. Function for plotting image changes on multiple images in a grid
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Function for plotting image changes on multiple images in a grid">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#note-the-only-error-checking-we-do-is-for-single-channel-image-vs-rgba-so-the-list-best-be-divisible-by-the-number-of-samples" class="md-nav__link">
+    Note: The only error checking we do is for single channel image vs RGB(A), so the list best be divisible by the number of samples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9a-using-pil-pillow-image-library" class="md-nav__link">
+    9a. Using PIL / Pillow Image library
+  </a>
+  
+    <nav class="md-nav" aria-label="9a. Using PIL / Pillow Image library">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#note-older-guides-on-pil-import-it-differently-you-probably-want-to-use-from-pil-import-image" class="md-nav__link">
+    NOTE Older guides on PIL import it differently. You probably want to use from PIL import Image
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9b-loading-images-with-pil" class="md-nav__link">
+    9b. Loading Images with PIL
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9c-display-pil-images-in-matplotlib" class="md-nav__link">
+    9c. Display PIL images in matplotlib
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9d-convert-pil-image-colors" class="md-nav__link">
+    9d. Convert PIL image colors
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10a-saving-your-images" class="md-nav__link">
+    10a. Saving your images
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10b-saving-colors-correctly" class="md-nav__link">
+    10b. Saving Colors Correctly
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-wrap-up" class="md-nav__link">
+    11. Wrap-up
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../computer-vision-part-2/" class="md-nav__link">
+        Computer Vision Part 2: Load Tagged Data With Pytorch
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../computer-vision-part-3/" class="md-nav__link">
+        Computer Vision Part 3: Train U-Net Architecture to predict UI segmentation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cte-subquery-who-gives-a-duck/" class="md-nav__link">
+        CTE vs Subquery: Who gives a 🦆uck?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gitlab-workflow/" class="md-nav__link">
+        Gitlab Workflow Project Management
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../holy-duck/" class="md-nav__link">
+        Holy 🦆uck! Fast Analysis with DuckDB + Pyarrow
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-i-code/" class="md-nav__link">
+        How I Edit Text Files (VS Code Settings)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lightgbm-water-pumps/" class="md-nav__link">
+        LightGBM Predicting Water Pump Functionality
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../my-favorite-python-one-liner-sucks/" class="md-nav__link">
+        My Favorite Python One Liner Sucks
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../personal-domain/" class="md-nav__link">
+        Share a website to the world in less than a day (Free for Students!)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pipreqs-fastapi/" class="md-nav__link">
+        Pipreqs FastAPI Server + Github Bot
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../python-form-generator/" class="md-nav__link">
+        Python Form Generator (JSON to Streamlit Form!)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../run-python/" class="md-nav__link">
+        3 Ways to Run Python Code
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../streamlit-fullstack/" class="md-nav__link">
+        Streamlit Full Stack Part 1: Python Web App in One File
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../streamlit-url-scan/" class="md-nav__link">
+        Scanning URLs from Images
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../terminal/" class="md-nav__link">
+        The Terminal (/ Shell / Command Line / Console)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../timeseries-part-1/" class="md-nav__link">
+        Time Series Data Part 1: What is a Time Series?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../timeseries-part-2/" class="md-nav__link">
+        Time Series Data Part 2: Darts and Streamlit
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../timeseries-part-3/" class="md-nav__link">
+        Time Series Data Part 3: Custom Model Tuning
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../timeseries-part-4/" class="md-nav__link">
+        Time Series Data Part 4: A Full Stack Use Case
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vgac-tagging/" class="md-nav__link">
+        Custom Data Tagging with Python OpenCV
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../weather-forecast-dashboard/" class="md-nav__link">
+        Checking 48 Mountain Weather Locations at Once
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+        
+          
+            
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../guides/">Guides</a>
+          
+            <label for="__nav_3">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="Guides" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Guides
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/geoparquet_intro/" class="md-nav__link">
+        GeoParquet Intro
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/golang_postgres_stack/" class="md-nav__link">
+        Project Golang Postgres Stack
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/golang_postgres_streamlit_stack/" class="md-nav__link">
+        Project Golang Postgres Streamlit Stack
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/golang_webserver/" class="md-nav__link">
+        Project Golang Webserver
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+        
+          
+            
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../resources/">Resources</a>
+          
+            <label for="__nav_4">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="Resources" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Resources
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/ci_cd/" class="md-nav__link">
+        CI/CD
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/circleci/" class="md-nav__link">
+        CircleCI
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/curl/" class="md-nav__link">
+        curl
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/frontend/" class="md-nav__link">
+        Frontend
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/gatsby/" class="md-nav__link">
+        Gatsby
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/git/" class="md-nav__link">
+        Git
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/gitlab/" class="md-nav__link">
+        Gitlab
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/golang/" class="md-nav__link">
+        Golang
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/graphql/" class="md-nav__link">
+        GraphQL
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/heroku/" class="md-nav__link">
+        Heroku
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/javascript/" class="md-nav__link">
+        Javascript
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/linux/" class="md-nav__link">
+        Linux
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/local_network/" class="md-nav__link">
+        Local Network
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/local_server/" class="md-nav__link">
+        Local Server
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/machine_learning/" class="md-nav__link">
+        Machine Learning
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/markdown/" class="md-nav__link">
+        Markdown
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/node/" class="md-nav__link">
+        Node JS
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/open_source/" class="md-nav__link">
+        Open Source
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/postgres/" class="md-nav__link">
+        Postgres
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/python/" class="md-nav__link">
+        Python
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/react/" class="md-nav__link">
+        React JS
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/reverse_proxy/" class="md-nav__link">
+        Reverse Proxy
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/scp/" class="md-nav__link">
+        SCP
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/time_series/" class="md-nav__link">
+        Time Series
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/windows/" class="md-nav__link">
+        Windows
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/yaml/" class="md-nav__link">
+        YAML
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      
+      
+        
+          
+            
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../setups/">Setups</a>
+          
+            <label for="__nav_5">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="Setups" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Setups
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setups/docker/" class="md-nav__link">
+        Docker
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setups/domain/" class="md-nav__link">
+        Domain Name
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setups/git/" class="md-nav__link">
+        Git
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setups/golang/" class="md-nav__link">
+        Golang
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setups/ide/" class="md-nav__link">
+        IDE
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setups/macos/" class="md-nav__link">
+        macOS
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setups/nginx_proxy_manager/" class="md-nav__link">
+        Nginx Proxy Manager
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setups/postgres/" class="md-nav__link">
+        Postgres
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setups/python/" class="md-nav__link">
+        Python
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setups/ssh/" class="md-nav__link">
+        SSH
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setups/terminal/" class="md-nav__link">
+        Terminal
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setups/vps/" class="md-nav__link">
+        VPS
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tags/" class="md-nav__link">
+        Tags
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="Page Index">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Page Index
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-import-and-inline-setup" class="md-nav__link">
+    1. Import and inline setup
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-fetching-some-image-files" class="md-nav__link">
+    2. Fetching some image files
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-use-opencv-to-load-image-files-into-numpy-ndarrays" class="md-nav__link">
+    3. Use OpenCV to Load image files into numpy ndarrays
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-dislpay-a-single-image-using-matplotlib" class="md-nav__link">
+    4. Dislpay a single Image using Matplotlib
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-opencv-color-caveat" class="md-nav__link">
+    5. OpenCV Color Caveat
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-displaying-multiple-images-with-matplotlib" class="md-nav__link">
+    6. Displaying multiple Images with Matplotlib
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-matplotlib-grayscale-color-caveat" class="md-nav__link">
+    7. Matplotlib Grayscale Color Caveat
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bonuses" class="md-nav__link">
+    Bonuses!
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-function-for-plotting-image-changes-on-multiple-images-in-a-grid" class="md-nav__link">
+    8. Function for plotting image changes on multiple images in a grid
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Function for plotting image changes on multiple images in a grid">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#note-the-only-error-checking-we-do-is-for-single-channel-image-vs-rgba-so-the-list-best-be-divisible-by-the-number-of-samples" class="md-nav__link">
+    Note: The only error checking we do is for single channel image vs RGB(A), so the list best be divisible by the number of samples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9a-using-pil-pillow-image-library" class="md-nav__link">
+    9a. Using PIL / Pillow Image library
+  </a>
+  
+    <nav class="md-nav" aria-label="9a. Using PIL / Pillow Image library">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#note-older-guides-on-pil-import-it-differently-you-probably-want-to-use-from-pil-import-image" class="md-nav__link">
+    NOTE Older guides on PIL import it differently. You probably want to use from PIL import Image
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9b-loading-images-with-pil" class="md-nav__link">
+    9b. Loading Images with PIL
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9c-display-pil-images-in-matplotlib" class="md-nav__link">
+    9c. Display PIL images in matplotlib
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9d-convert-pil-image-colors" class="md-nav__link">
+    9d. Convert PIL image colors
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10a-saving-your-images" class="md-nav__link">
+    10a. Saving your images
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10b-saving-colors-correctly" class="md-nav__link">
+    10b. Saving Colors Correctly
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-wrap-up" class="md-nav__link">
+    11. Wrap-up
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+  
+
+  <nav class="md-tags" >
+    
+      
+      
+        <a href="../../tags/#beginner" class="md-tag">beginner</a>
+      
+    
+      
+      
+        <a href="../../tags/#images" class="md-tag">images</a>
+      
+    
+      
+      
+        <a href="../../tags/#opencv" class="md-tag">opencv</a>
+      
+    
+      
+      
+        <a href="../../tags/#python" class="md-tag">python</a>
+      
+    
+      
+      
+        <a href="../../tags/#pytorch" class="md-tag">pytorch</a>
+      
+    
+      
+      
+        <a href="../../tags/#guide" class="md-tag">guide</a>
+      
+    
+  </nav>
+
+
+
+  
+  
+
+
+
+<h1 id="computer-vision-part-1-loading-images-with-python">Computer Vision Part 1: Loading Images with Python<a class="headerlink" href="#computer-vision-part-1-loading-images-with-python" title="Permanent link">🔗</a></h1>
+<p>Intro to Loading Images with OpenCV and Matplotlib in a Python Notebook (+ Bonus using PIL / Pillow)</p>
+<h2 id="1-import-and-inline-setup">1. Import and inline setup<a class="headerlink" href="#1-import-and-inline-setup" title="Permanent link">🔗</a></h2>
+<p>At the start of our notebook we put <code>%matplotlib inline</code>, this isn't necessary in normal python because there is no inline viewing.</p>
+<p>We import <code>matplotlib.pyplot</code> as <code>plt</code> for ease of typing.</p>
+<p>We also import opencv (<code>cv2</code>) to load images. Matplotlib uses Numpy arrays (ndarray) to display, so does opencv.
+Later we'll using PIL / Pillow to load images, which will require converting to numpy anyway</p>
+<p>Use <code>ctrl</code> + <code>enter</code> to run cells more easily, or use the <code>play</code> button above or to the left of cells.</p>
+<p>Once we've run both of the following cells we'll be able to view images. If this fails then your virtual environment probably doesn't have both matplotlib and cv2 installed, so you'll need to <code>pip install...</code> or <code>conda install...</code> based on your setup.</p>
+<p>Also note that PIL has inline image viewing, I'm not sure if it's supported in all notebooks. There's also HTML5 viewing.</p>
+<p><a href="https://stackoverflow.com/a/24884342">Refernce from SO</a></p>
+<p><a href="https://docs.opencv.org/3.4.2/">OpenCV docs for version 3.4.2</a> (Relatively similar between versions 2.x and 4.x, the different pip and conda and conda-forge sources will give different verisions)</p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
+<span class="normal"><a href="#__codelineno-1-2">2</a></span>
+<span class="normal"><a href="#__codelineno-1-3">3</a></span>
+<span class="normal"><a href="#__codelineno-1-4">4</a></span>
+<span class="normal"><a href="#__codelineno-1-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="kn">import</span> <span class="nn">matplotlib</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="kn">import</span> <span class="nn">cv2</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Matplotlib version: </span><span class="si">{</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;OpenCV version: </span><span class="si">{</span><span class="n">cv2</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code>Matplotlib version: 3.2.1
+OpenCV version: 4.2.0
+</code></pre></div></td></tr></table></div>
+<h2 id="2-fetching-some-image-files">2. Fetching some image files<a class="headerlink" href="#2-fetching-some-image-files" title="Permanent link">🔗</a></h2>
+<p>In this step we do a basic folder / directory search with <code>glob.glob</code>, which is a lot like <code>ls</code> in the terminal. I'll use a String to specify the directory and an asteriks <code>*.png</code> to indicate a wildcard (i.e. it selects any filename that ends in '.png' in the directory. (We have to import it to use it, but it's built into python)</p>
+<p>Where your files are may vary, in this case I use a relative path ('./start_images') since the <code>file.ipynb</code> is in the same folder as my data folder. You could also use an absolute path ('/Users/username/datasets/mycooldata')</p>
+<p><a href="https://pymotw.com/2/glob/">Reference for glob</a>
+<a href="https://en.wikipedia.org/wiki/Path_(computing)#Absolute_and_relative_paths">Reference for directories</a></p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="kn">import</span> <span class="nn">glob</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span>
+<span class="normal"><a href="#__codelineno-3-2">2</a></span>
+<span class="normal"><a href="#__codelineno-3-3">3</a></span>
+<span class="normal"><a href="#__codelineno-3-4">4</a></span>
+<span class="normal"><a href="#__codelineno-3-5">5</a></span>
+<span class="normal"><a href="#__codelineno-3-6">6</a></span>
+<span class="normal"><a href="#__codelineno-3-7">7</a></span>
+<span class="normal"><a href="#__codelineno-3-8">8</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="n">directory_wildcard_png</span> <span class="o">=</span> <span class="s2">&quot;./start_/images/*.png&quot;</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2"></a><span class="n">file_names</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">directory_wildcard_png</span><span class="p">)</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">file_names</span><span class="p">)</span><span class="si">}</span><span class="s2"> .png files in the folder </span><span class="si">{</span><span class="n">directory_wildcard_png</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4"></a><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;First 3 file_paths:&quot;</span><span class="p">)</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5"></a>
+<a id="__codelineno-3-6" name="__codelineno-3-6"></a><span class="n">first_3</span> <span class="o">=</span> <span class="n">file_names</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7"></a><span class="k">for</span> <span class="n">file_path</span> <span class="ow">in</span> <span class="n">first_3</span><span class="p">:</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code>Found 6 .png files in the folder ./start_/images/*.png
+First 3 file_paths:
+./start_/images/6_poke.png
+./start_/images/4_poke.png
+./start_/images/2_poke.png
+</code></pre></div></td></tr></table></div>
+<h2 id="3-use-opencv-to-load-image-files-into-numpy-ndarrays">3. Use OpenCV to Load image files into numpy ndarrays<a class="headerlink" href="#3-use-opencv-to-load-image-files-into-numpy-ndarrays" title="Permanent link">🔗</a></h2>
+<p>Now that we have the file paths that tell where each image is, we can load them.</p>
+<p>We'll make an empty list that we'll append with loaded images. We 'Image Read' (<code>imread</code>) in the images and specify OpenCV to give us a 3-channel image (Red, Green, Blue), which is what we generally want to work with (This is included because if you want to use a texture / sprite with empty alpha you should use <code>cv2.IMREAD_UNCHANGED</code> to load in a 4-channel image with alpha transparency). </p>
+<p>OpenCV (and by extension Numpy in most cases) follows the order of (ROWS, COLUMNS, CHANNELS) for the array shape. So when we use the <code>.shape</code> attribute on an OpenCV image we get a 3-tuple of (Height, Width, Channels). If it is 1-channel it will be a 2-tuple of (Height, Width) <strong>If working in PIL see 9.</strong></p>
+<p>You can do this with as many files as you want, but if you try to load too many your computer may slow down / python will Out Of Memory error.</p>
+<p>If you have an image in the same folder a non-absolute path will probably work: "myimage.png", "./myimage.png" </p>
+<p><a href="https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_gui/py_image_display/py_image_display.html">Reference for OpenCV non-notebook</a></p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1">1</a></span>
+<span class="normal"><a href="#__codelineno-4-2">2</a></span>
+<span class="normal"><a href="#__codelineno-4-3">3</a></span>
+<span class="normal"><a href="#__codelineno-4-4">4</a></span>
+<span class="normal"><a href="#__codelineno-4-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a><span class="n">open_cv_images</span> <span class="o">=</span> <span class="p">[]</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2"></a><span class="k">for</span> <span class="n">file_path</span> <span class="ow">in</span> <span class="n">file_names</span><span class="p">:</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3"></a>    <span class="n">loaded_image</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">IMREAD_COLOR</span><span class="p">)</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4"></a>    <span class="n">open_cv_images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loaded_image</span><span class="p">)</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;First image type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">open_cv_images</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="si">}</span><span class="s2">, shape: </span><span class="si">{</span><span class="n">open_cv_images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, dtype: </span><span class="si">{</span><span class="n">open_cv_images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>First image type: &lt;class &#39;numpy.ndarray&#39;&gt;, shape: (224, 256, 3), dtype: uint8
+</code></pre></div></td></tr></table></div>
+<h2 id="4-dislpay-a-single-image-using-matplotlib">4. Dislpay a single Image using Matplotlib<a class="headerlink" href="#4-dislpay-a-single-image-using-matplotlib" title="Permanent link">🔗</a></h2>
+<p>At this point you've got all the images loaded and ready to display, now it's just up to you whether you to spread out the calls or make a grid with matplotlib</p>
+<p>If we use more than one <code>plt.imshow()</code> call in the same cell one will not actually get displayed (there may be a workaround to this, we'll use a grid at step 6). You can try commenting out the second <code>plt.imshow()</code> call, you should get a different image when you run it again.</p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1">1</a></span>
+<span class="normal"><a href="#__codelineno-5-2">2</a></span>
+<span class="normal"><a href="#__codelineno-5-3">3</a></span>
+<span class="normal"><a href="#__codelineno-5-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1"></a><span class="c1"># This image won&#39;t display, gets overwritten by next one</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2"></a><span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">open_cv_images</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3"></a><span class="c1"># Single Image</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4"></a><span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">open_cv_images</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>&lt;matplotlib.image.AxesImage at 0x7f52a7f9a390&gt;
+</code></pre></div></td></tr></table></div>
+<p><img alt="Screenshot" src="/images/load_images_with_opencv_and_matplotlib_files/load_images_with_opencv_and_matplotlib_9_1.png" /></p>
+<h2 id="5-opencv-color-caveat">5. OpenCV Color Caveat<a class="headerlink" href="#5-opencv-color-caveat" title="Permanent link">🔗</a></h2>
+<p>OpenCV loads images in <code>B-G-R</code> order (Blue, Green, Red), as opposed to <code>R-G-B</code> which I'm prety sure most of the rest of the world uses (Except people really into color, who use HSV or HSL or whatever)</p>
+<p>What this implies:
+- We could swap the first and last channel to display it as RGB easily with matplotlib.
+- When saving a file OpenCV assumes the image is in BGR.</p>
+<p>We'll focus on the first implication for now and discuss the second when we use PIL / Pillow.</p>
+<p>We use OpenCV's <code>cvtColor</code> ('Convert Color') in the following way: <code>recolored_image = cv2.cvtColor(original_image, cv2.TYPE_OF_CONVERSION)</code>.</p>
+<p>Conversions you'll probably use the most: 
+- <code>cv2.COLOR_BGR2RGB</code>: convert BGR to RGB (essentially the same as <code>cv2.COLOR_RGB2BGR</code>, swaps first and third channel)
+- <code>cv2.COLOR_BGR2GRAY</code>: convert BGR to Grayscale (1-channel) (<code>RGB2GRAY</code> also available)
+- <code>cv2.COLOR_GRAY2BGR</code>: convert Grayscale to BGR 3-channel (<code>GRAY2RGB</code> also available)</p>
+<p><a href="https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_imgproc/py_colorspaces/py_colorspaces.html">Reference for changing colors (Bonus Object Tracking demo using HSV color space)</a></p>
+<p><a href="https://docs.opencv.org/3.4.2/d7/d1b/group__imgproc__misc.html#ga4e0972be5de079fed4e3a10e24ef5ef0">All Conversion FLAGS</a></p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span>
+<span class="normal"><a href="#__codelineno-6-2">2</a></span>
+<span class="normal"><a href="#__codelineno-6-3">3</a></span>
+<span class="normal"><a href="#__codelineno-6-4">4</a></span>
+<span class="normal"><a href="#__codelineno-6-5">5</a></span>
+<span class="normal"><a href="#__codelineno-6-6">6</a></span>
+<span class="normal"><a href="#__codelineno-6-7">7</a></span>
+<span class="normal"><a href="#__codelineno-6-8">8</a></span>
+<span class="normal"><a href="#__codelineno-6-9">9</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1"></a><span class="n">rgb_images</span> <span class="o">=</span> <span class="p">[]</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2"></a><span class="n">grayscale_images</span> <span class="o">=</span> <span class="p">[]</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3"></a><span class="k">for</span> <span class="n">bgr_image</span> <span class="ow">in</span> <span class="n">open_cv_images</span><span class="p">:</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4"></a>    <span class="n">rgb_image</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">bgr_image</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2RGB</span><span class="p">)</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5"></a>    <span class="n">rgb_images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rgb_image</span><span class="p">)</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6"></a>    <span class="n">gray_image</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">bgr_image</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7"></a>    <span class="n">grayscale_images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gray_image</span><span class="p">)</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8"></a>
+<a id="__codelineno-6-9" name="__codelineno-6-9"></a><span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">rgb_images</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>&lt;matplotlib.image.AxesImage at 0x7f52a8a70910&gt;
+</code></pre></div></td></tr></table></div>
+<p><img alt="svg" src="/images/load_images_with_opencv_and_matplotlib_files/load_images_with_opencv_and_matplotlib_11_1.png" /></p>
+<h2 id="6-displaying-multiple-images-with-matplotlib">6. Displaying multiple Images with Matplotlib<a class="headerlink" href="#6-displaying-multiple-images-with-matplotlib" title="Permanent link">🔗</a></h2>
+<p>Now our RGB images can display nicely, so let's move on to displaying multiple images in a grid with matplotlib.</p>
+<p>We'll use matplotlib <code>subplots()</code>, but you can find many implementations of 'make grid of images' with matplotlibt using  other functions</p>
+<p><a href="https://matplotlib.org/3.2.1/api/_as_gen/matplotlib.pyplot.subplots.html">Reference for matplotlib subplots (also see figures keywords link)</a></p>
+<p><a href="https://www.w3schools.com/colors/colors_names.asp">HTML colornames that are valid for matplotlib</a></p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-7-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-7-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-7-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-7-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-7-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-7-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-7-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-7-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-7-10">10</a></span>
+<span class="normal"><a href="#__codelineno-7-11">11</a></span>
+<span class="normal"><a href="#__codelineno-7-12">12</a></span>
+<span class="normal"><a href="#__codelineno-7-13">13</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1"></a><span class="n">NUM_ROWS</span> <span class="o">=</span> <span class="mi">2</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2"></a><span class="n">NUM_COLS</span> <span class="o">=</span> <span class="mi">3</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3"></a><span class="c1"># Scale and Dimensions to easier view things in your browser. 16:9 is common screen ratio</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4"></a><span class="n">SCALE</span> <span class="o">=</span> <span class="mf">1.5</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5"></a><span class="n">FIG_DIMENSIONS</span> <span class="o">=</span> <span class="p">(</span><span class="mi">16</span> <span class="o">*</span> <span class="n">SCALE</span><span class="p">,</span> <span class="mi">9</span> <span class="o">*</span> <span class="n">SCALE</span><span class="p">)</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6"></a><span class="n">BG_COLOR</span> <span class="o">=</span> <span class="s1">&#39;beige&#39;</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7"></a>
+<a id="__codelineno-7-8" name="__codelineno-7-8"></a><span class="n">_</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">NUM_ROWS</span><span class="p">,</span> <span class="n">NUM_COLS</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="n">FIG_DIMENSIONS</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="n">BG_COLOR</span><span class="p">)</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9"></a><span class="c1"># Turn 2d-array of axes into 1d list to select each (row, col) index</span>
+<a id="__codelineno-7-10" name="__codelineno-7-10"></a><span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+<a id="__codelineno-7-11" name="__codelineno-7-11"></a><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">axis</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">axes</span><span class="p">):</span>
+<a id="__codelineno-7-12" name="__codelineno-7-12"></a>    <span class="n">axis</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">grayscale_images</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+<a id="__codelineno-7-13" name="__codelineno-7-13"></a><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+<p><img alt="svg" src="/images/load_images_with_opencv_and_matplotlib_files/load_images_with_opencv_and_matplotlib_13_0.png" /></p>
+<h2 id="7-matplotlib-grayscale-color-caveat">7. Matplotlib Grayscale Color Caveat<a class="headerlink" href="#7-matplotlib-grayscale-color-caveat" title="Permanent link">🔗</a></h2>
+<p>Well we've run into another display issue. Our grayscale images are 1 channel, but why does matplotlib show these colors? Grayscale / 1-channel images can be used in many domains, and matplotlib isn't just for plotting images, so their default <code>colormap</code> from values to colors is not <code>Grayscale</code>, but instead it's something called <code>viridis</code> and used to be <code>jet</code>. (I dont' know anything about the uses of these, but there's a whole talk on why they make <code>viridis</code>, so there's theory behind it).</p>
+<p>We'll just make sure to specify to matplotlib that we want to use the <code>gray</code> colormap whenever we <code>imshow</code> an image. Or use another one of <a href="https://matplotlib.org/3.2.1/gallery/color/colormap_reference.html">matplotlib colormaps</a>.</p>
+<p>We also will treat this as a whole new figure (a new set of subplots), so we'll use the <code>plt.subplots()</code> call again</p>
+<p><a href="https://matplotlib.org/3.2.1/users/dflt_style_changes.html#colormap">Reference for default map in matplotlib</a></p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1">1</a></span>
+<span class="normal"><a href="#__codelineno-8-2">2</a></span>
+<span class="normal"><a href="#__codelineno-8-3">3</a></span>
+<span class="normal"><a href="#__codelineno-8-4">4</a></span>
+<span class="normal"><a href="#__codelineno-8-5">5</a></span>
+<span class="normal"><a href="#__codelineno-8-6">6</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1"></a><span class="n">_</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">NUM_ROWS</span><span class="p">,</span> <span class="n">NUM_COLS</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="n">FIG_DIMENSIONS</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="n">BG_COLOR</span><span class="p">)</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2"></a><span class="c1">#Turn 2d-array of axes into 1d list to select each (row, col) index</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3"></a><span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4"></a><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">axis</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">axes</span><span class="p">):</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5"></a>    <span class="n">axis</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">grayscale_images</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<a id="__codelineno-8-6" name="__codelineno-8-6"></a><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+<p><img alt="svg" src="/images/load_images_with_opencv_and_matplotlib_files/load_images_with_opencv_and_matplotlib_15_0.png" /></p>
+<h2 id="bonuses">Bonuses!<a class="headerlink" href="#bonuses" title="Permanent link">🔗</a></h2>
+<p>Those are the most important points about using Python Glob to get files, OpenCV to load, MatplotLib to display.</p>
+<p>We'll now go into more specific use cases
+- Plotting image changes on multiple images in a grid
+- Using PIL / Pillow and the differences with OpenCV
+- Saving Images</p>
+<h2 id="8-function-for-plotting-image-changes-on-multiple-images-in-a-grid">8. Function for plotting image changes on multiple images in a grid<a class="headerlink" href="#8-function-for-plotting-image-changes-on-multiple-images-in-a-grid" title="Permanent link">🔗</a></h2>
+<p>Commonly when we do image processing tasks we'll have an <code>input</code>, perform some operation (often using a <code>mask</code> or another <code>image</code>), and then have some <code>output</code> image that's different from the original. Maybe we want to perform multiple operations and view all of them, then we'd have an <code>extra_output</code> for each <code>input</code></p>
+<p>We usually want to compare the <code>output</code> with the <code>input</code> to make sure our operation is doing what we want, and we usually want to ensure it's working on multiple images.</p>
+<p>What this implies:
+- If we maintain a list of inputs and a list of outputs that correspond to each input we can display each <code>input</code> in one row, and each <code>output</code> on the next to compare 
+- If <code>inputs</code> and <code>outputs</code> have a one-to-one relationship, it'll be simple to go through both in one list but display in multiple rows
+- We can treat any transformation or step of our program as an operation, and might want to check that each one works as we're intending</p>
+<p>We'll make a function that takes a list of ALL the image lists concatenated and the number of <code>inputs</code> (length of our <code>inputs</code> list) to display each list row by row.</p>
+<h3 id="note-the-only-error-checking-we-do-is-for-single-channel-image-vs-rgba-so-the-list-best-be-divisible-by-the-number-of-samples">Note: The only error checking we do is for single channel image vs RGB(A), so the list best be divisible by the number of samples<a class="headerlink" href="#note-the-only-error-checking-we-do-is-for-single-channel-image-vs-rgba-so-the-list-best-be-divisible-by-the-number-of-samples" title="Permanent link">🔗</a></h3>
+<p>(We'll also only use 3 images for size constraints)</p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-9-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-9-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-9-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-9-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-9-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-9-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-9-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-9-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-9-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-9-10">10</a></span>
+<span class="normal"><a href="#__codelineno-9-11">11</a></span>
+<span class="normal"><a href="#__codelineno-9-12">12</a></span>
+<span class="normal"><a href="#__codelineno-9-13">13</a></span>
+<span class="normal"><a href="#__codelineno-9-14">14</a></span>
+<span class="normal"><a href="#__codelineno-9-15">15</a></span>
+<span class="normal"><a href="#__codelineno-9-16">16</a></span>
+<span class="normal"><a href="#__codelineno-9-17">17</a></span>
+<span class="normal"><a href="#__codelineno-9-18">18</a></span>
+<span class="normal"><a href="#__codelineno-9-19">19</a></span>
+<span class="normal"><a href="#__codelineno-9-20">20</a></span>
+<span class="normal"><a href="#__codelineno-9-21">21</a></span>
+<span class="normal"><a href="#__codelineno-9-22">22</a></span>
+<span class="normal"><a href="#__codelineno-9-23">23</a></span>
+<span class="normal"><a href="#__codelineno-9-24">24</a></span>
+<span class="normal"><a href="#__codelineno-9-25">25</a></span>
+<span class="normal"><a href="#__codelineno-9-26">26</a></span>
+<span class="normal"><a href="#__codelineno-9-27">27</a></span>
+<span class="normal"><a href="#__codelineno-9-28">28</a></span>
+<span class="normal"><a href="#__codelineno-9-29">29</a></span>
+<span class="normal"><a href="#__codelineno-9-30">30</a></span>
+<span class="normal"><a href="#__codelineno-9-31">31</a></span>
+<span class="normal"><a href="#__codelineno-9-32">32</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1"></a><span class="k">def</span> <span class="nf">display_image_comparison</span><span class="p">(</span><span class="n">list_of_inputs_and_outputs</span><span class="p">,</span> <span class="n">number_of_samples</span><span class="p">,</span> <span class="n">fig_dimensions</span><span class="o">=</span><span class="p">(</span><span class="mi">24</span><span class="p">,</span> <span class="mi">13</span><span class="p">),</span> <span class="n">bg_color</span><span class="o">=</span><span class="s1">&#39;beige&#39;</span><span class="p">):</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2"></a>    <span class="n">num_rows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">list_of_inputs_and_outputs</span><span class="p">)</span> <span class="o">//</span> <span class="n">number_of_samples</span> 
+<a id="__codelineno-9-3" name="__codelineno-9-3"></a>    <span class="n">_</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">num_rows</span><span class="p">,</span> <span class="n">number_of_samples</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="n">fig_dimensions</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="n">bg_color</span><span class="p">)</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4"></a>    <span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5"></a>    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">axis</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">axes</span><span class="p">):</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6"></a>        <span class="n">image_to_display</span> <span class="o">=</span> <span class="n">list_of_inputs_and_outputs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7"></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_to_display</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+<a id="__codelineno-9-8" name="__codelineno-9-8"></a>            <span class="n">axis</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image_to_display</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<a id="__codelineno-9-9" name="__codelineno-9-9"></a>        <span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-9-10" name="__codelineno-9-10"></a>            <span class="n">axis</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image_to_display</span><span class="p">)</span>
+<a id="__codelineno-9-11" name="__codelineno-9-11"></a>    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<a id="__codelineno-9-12" name="__codelineno-9-12"></a>
+<a id="__codelineno-9-13" name="__codelineno-9-13"></a><span class="c1"># Imagine our task is comparing grayscale and rgb images, we&#39;ve already done the transformations and maintained the images</span>
+<a id="__codelineno-9-14" name="__codelineno-9-14"></a><span class="c1"># Load in input images</span>
+<a id="__codelineno-9-15" name="__codelineno-9-15"></a><span class="n">input_images</span> <span class="o">=</span> <span class="n">open_cv_images</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
+<a id="__codelineno-9-16" name="__codelineno-9-16"></a><span class="c1"># Do some operation to them, saving each in a list</span>
+<a id="__codelineno-9-17" name="__codelineno-9-17"></a><span class="n">recolor_operation_outputs</span> <span class="o">=</span> <span class="n">rgb_images</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
+<a id="__codelineno-9-18" name="__codelineno-9-18"></a><span class="c1"># Do some other operation to the intermediate step or inputs</span>
+<a id="__codelineno-9-19" name="__codelineno-9-19"></a><span class="n">gray_operation_outputs</span> <span class="o">=</span> <span class="n">grayscale_images</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
+<a id="__codelineno-9-20" name="__codelineno-9-20"></a>
+<a id="__codelineno-9-21" name="__codelineno-9-21"></a><span class="c1"># We can concatenate a few ways, python lists are interesting</span>
+<a id="__codelineno-9-22" name="__codelineno-9-22"></a><span class="n">all_images</span> <span class="o">=</span> <span class="p">[]</span>
+<a id="__codelineno-9-23" name="__codelineno-9-23"></a><span class="n">all_images</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">input_images</span><span class="p">)</span>
+<a id="__codelineno-9-24" name="__codelineno-9-24"></a><span class="n">all_images</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">recolor_operation_outputs</span><span class="p">)</span>
+<a id="__codelineno-9-25" name="__codelineno-9-25"></a><span class="n">all_images</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">gray_operation_outputs</span><span class="p">)</span>
+<a id="__codelineno-9-26" name="__codelineno-9-26"></a>
+<a id="__codelineno-9-27" name="__codelineno-9-27"></a><span class="c1"># One-liner expand each list into elements</span>
+<a id="__codelineno-9-28" name="__codelineno-9-28"></a><span class="c1"># all_images = [*input_images, *recolor_operation_outputs, *gray_operation_outputs]</span>
+<a id="__codelineno-9-29" name="__codelineno-9-29"></a>
+<a id="__codelineno-9-30" name="__codelineno-9-30"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Num inputs: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">input_images</span><span class="p">)</span><span class="si">}</span><span class="s2">, num rgb outputs: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">recolor_operation_outputs</span><span class="p">)</span><span class="si">}</span><span class="s2">, num grayscale images: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">gray_operation_outputs</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-9-31" name="__codelineno-9-31"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">all_images</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-9-32" name="__codelineno-9-32"></a><span class="n">display_image_comparison</span><span class="p">(</span><span class="n">all_images</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_images</span><span class="p">))</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code>Num inputs: 3, num rgb outputs: 3, num grayscale images: 3
+Total: 9
+</code></pre></div></td></tr></table></div>
+<p><img alt="svg" src="/images/load_images_with_opencv_and_matplotlib_files/load_images_with_opencv_and_matplotlib_18_1.png" /></p>
+<h2 id="9a-using-pil-pillow-image-library">9a. Using PIL / Pillow Image library<a class="headerlink" href="#9a-using-pil-pillow-image-library" title="Permanent link">🔗</a></h2>
+<p>PIL / Pillow / Python Imaging Library is also super popular, but the images are in a different format than OpenCV and can't be displayed immediately by Matplotlib, so we'll go over some of the differences. I'll make notes in the code that show where to be careful when dealing with Pillow vs OpenCV.</p>
+<p>Installing this library has changed over the years. Using <code>pip install Pillow</code> should get you the correct version. Alternatively, the pytorch extension <code>torchvision</code> has Pillow as a dependency, so if you <code>pip install torchvision</code> you should get a working Pillow.</p>
+<p>I'll mostly only refer to the <code>Image</code> Module (<a href="https://pillow.readthedocs.io/en/stable/reference/Image.html">Documentation</a>), ImageColor and ImageChops may also be relevant to your tasks.</p>
+<p>We'll also need direct access to Numpy for conversions and displaying, we import as <code>np</code> for ease of typing</p>
+<h3 id="note-older-guides-on-pil-import-it-differently-you-probably-want-to-use-from-pil-import-image">NOTE Older guides on PIL import it differently. You probably want to use <code>from PIL import Image</code><a class="headerlink" href="#note-older-guides-on-pil-import-it-differently-you-probably-want-to-use-from-pil-import-image" title="Permanent link">🔗</a></h3>
+<p><a href="https://pillow.readthedocs.io/en/stable/installation.html">Reference</a></p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-10-1">1</a></span>
+<span class="normal"><a href="#__codelineno-10-2">2</a></span>
+<span class="normal"><a href="#__codelineno-10-3">3</a></span>
+<span class="normal"><a href="#__codelineno-10-4">4</a></span>
+<span class="normal"><a href="#__codelineno-10-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1"></a><span class="kn">import</span> <span class="nn">PIL</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2"></a><span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3"></a><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4"></a><span class="nb">print</span><span class="p">(</span><span class="n">PIL</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5"></a><span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code>7.1.1
+1.18.1
+</code></pre></div></td></tr></table></div>
+<h2 id="9b-loading-images-with-pil">9b. Loading Images with PIL<a class="headerlink" href="#9b-loading-images-with-pil" title="Permanent link">🔗</a></h2>
+<p>Not much different from OpenCV, just a different command</p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-11-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-11-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-11-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-11-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-11-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-11-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-11-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-11-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-11-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-11-10">10</a></span>
+<span class="normal"><a href="#__codelineno-11-11">11</a></span>
+<span class="normal"><a href="#__codelineno-11-12">12</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1"></a><span class="n">pil_images</span> <span class="o">=</span> <span class="p">[]</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2"></a><span class="k">for</span> <span class="n">file_path</span> <span class="ow">in</span> <span class="n">file_names</span><span class="p">:</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3"></a>    <span class="c1"># Use open() instead of imread()</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4"></a>    <span class="n">loaded_image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+<a id="__codelineno-11-5" name="__codelineno-11-5"></a>    <span class="n">pil_images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loaded_image</span><span class="p">)</span>
+<a id="__codelineno-11-6" name="__codelineno-11-6"></a>
+<a id="__codelineno-11-7" name="__codelineno-11-7"></a><span class="c1"># Use .size instead of .shape, which yields (Width, Height), unlike numpy ndarray.shape, which is (Height, Width)</span>
+<a id="__codelineno-11-8" name="__codelineno-11-8"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;First PIL image type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">pil_images</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="si">}</span><span class="s2">, size: </span><span class="si">{</span><span class="n">pil_images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s2">, Image Mode: </span><span class="si">{</span><span class="n">pil_images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mode</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-11-9" name="__codelineno-11-9"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;OpenCV image type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">open_cv_images</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="si">}</span><span class="s2">, size: </span><span class="si">{</span><span class="n">open_cv_images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-11-10" name="__codelineno-11-10"></a>
+<a id="__codelineno-11-11" name="__codelineno-11-11"></a><span class="c1"># In most cases we should be able to view PIL images just by calling the variable. I&#39;m not sure what notebook setups this works in</span>
+<a id="__codelineno-11-12" name="__codelineno-11-12"></a><span class="n">pil_images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code>First PIL image type: &lt;class &#39;PIL.PngImagePlugin.PngImageFile&#39;&gt;, size: (256, 224), Image Mode: RGB
+OpenCV image type: &lt;class &#39;numpy.ndarray&#39;&gt;, size: (224, 256, 3)
+</code></pre></div></td></tr></table></div>
+<p><img alt="png" src="/images/load_images_with_opencv_and_matplotlib_files/load_images_with_opencv_and_matplotlib_22_1.png" /></p>
+<h2 id="9c-display-pil-images-in-matplotlib">9c. Display PIL images in matplotlib<a class="headerlink" href="#9c-display-pil-images-in-matplotlib" title="Permanent link">🔗</a></h2>
+<p>One way to compare with OpenCV images is using matplotlib, but we need to convert. So we'll use the numpy conversion <code>asarray()</code> to get something matplotlib can use.</p>
+<p>As you should see, PIL loads images in RGB format by default.</p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-12-1">1</a></span>
+<span class="normal"><a href="#__codelineno-12-2">2</a></span>
+<span class="normal"><a href="#__codelineno-12-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1"></a><span class="n">numpy_from_pil</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">pil_images</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PIL size: </span><span class="si">{</span><span class="n">pil_images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s2">, numpy shape: </span><span class="si">{</span><span class="n">numpy_from_pil</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3"></a><span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">numpy_from_pil</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span></pre></div></td><td class="code"><div><pre><span></span><code>PIL size: (256, 224), numpy shape: (224, 256, 3)
+
+
+
+
+
+&lt;matplotlib.image.AxesImage at 0x7f52a579de90&gt;
+</code></pre></div></td></tr></table></div>
+<p><img alt="svg" src="/images/load_images_with_opencv_and_matplotlib_files/load_images_with_opencv_and_matplotlib_24_2.png" /></p>
+<h2 id="9d-convert-pil-image-colors">9d. Convert PIL image colors<a class="headerlink" href="#9d-convert-pil-image-colors" title="Permanent link">🔗</a></h2>
+<p>This is a good time to talk about <code>in-place</code> vs <code>out-of-place</code> operations. In-Place means something affects the object directly, and thus will have some effect on the object. Out of Place means the original object isn't altered during the operation and a brand new object is returned by the function. </p>
+<p>Most operations we're using here are Out of Place, so be sure to save the result in a new variable assignment (as in <code>gray_pil = pil_image.convert()</code>) or append the result to a list.</p>
+<p>But be on the look out for In-Place operations, especially in Numpy. They use less memory because they don't save two copies of the thing you're working with, but they'll affect your original data, so side effect bugs may occur in your program.</p>
+<p>For displaying, we'll convert to numpy pre-emptively</p>
+<p>See <a href="https://pillow.readthedocs.io/en/stable/handbook/concepts.html#concept-modes">Pillow image modes</a> for some more info</p>
+<ul>
+<li>"1" is 1-bit pixels, black or white</li>
+<li>"L" is 8-bit black and white (0...255 scale)</li>
+<li>"RGB" is 8-bit RGB</li>
+</ul>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-13-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-13-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-13-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-13-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-13-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-13-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-13-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-13-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-13-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-13-10">10</a></span>
+<span class="normal"><a href="#__codelineno-13-11">11</a></span>
+<span class="normal"><a href="#__codelineno-13-12">12</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1"></a><span class="n">input_images</span> <span class="o">=</span> <span class="p">[]</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2"></a><span class="n">gray_images</span> <span class="o">=</span> <span class="p">[]</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3"></a><span class="k">for</span> <span class="n">pil_image</span> <span class="ow">in</span> <span class="n">pil_images</span><span class="p">:</span>
+<a id="__codelineno-13-4" name="__codelineno-13-4"></a>    <span class="n">numpy_from_pil</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">pil_image</span><span class="p">)</span>
+<a id="__codelineno-13-5" name="__codelineno-13-5"></a>    <span class="n">input_images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">numpy_from_pil</span><span class="p">)</span>
+<a id="__codelineno-13-6" name="__codelineno-13-6"></a>
+<a id="__codelineno-13-7" name="__codelineno-13-7"></a>    <span class="n">gray_pil</span> <span class="o">=</span> <span class="n">pil_image</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;L&quot;</span><span class="p">)</span>
+<a id="__codelineno-13-8" name="__codelineno-13-8"></a>    <span class="n">gray_numpy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">gray_pil</span><span class="p">)</span>
+<a id="__codelineno-13-9" name="__codelineno-13-9"></a>    <span class="n">gray_images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gray_numpy</span><span class="p">)</span>
+<a id="__codelineno-13-10" name="__codelineno-13-10"></a>
+<a id="__codelineno-13-11" name="__codelineno-13-11"></a><span class="n">all_images</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="n">input_images</span><span class="p">,</span> <span class="o">*</span><span class="n">gray_images</span><span class="p">]</span>
+<a id="__codelineno-13-12" name="__codelineno-13-12"></a><span class="n">display_image_comparison</span><span class="p">(</span><span class="n">all_images</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_images</span><span class="p">))</span>
+</code></pre></div></td></tr></table></div>
+<p><img alt="svg" src="/images/load_images_with_opencv_and_matplotlib_files/load_images_with_opencv_and_matplotlib_26_0.png" /></p>
+<h2 id="10a-saving-your-images">10a. Saving your images<a class="headerlink" href="#10a-saving-your-images" title="Permanent link">🔗</a></h2>
+<p>After a long hard day of image processing and converting, you probably want to save the results so that your computer doesn't have to do all that hard work all over again.</p>
+<p><strong>NOTE</strong> The middle image that displays correctly is actually backwards to OpenCV</p>
+<p>We'll use a directory that is at the same level as our <code>.ipynb</code> in our filesystem, so we can reach it with <code>./out_images</code> as opposed to a full absolute path (ex. <code>/home/username/projects/segmentation/outputs</code>)</p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-14-1">1</a></span>
+<span class="normal"><a href="#__codelineno-14-2">2</a></span>
+<span class="normal"><a href="#__codelineno-14-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1"></a><span class="kn">import</span> <span class="nn">os</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2"></a><span class="n">output_dir</span> <span class="o">=</span> <span class="s1">&#39;./out_images&#39;</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3"></a><span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-15-1">1</a></span>
+<span class="normal"><a href="#__codelineno-15-2">2</a></span>
+<span class="normal"><a href="#__codelineno-15-3">3</a></span>
+<span class="normal"><a href="#__codelineno-15-4">4</a></span>
+<span class="normal"><a href="#__codelineno-15-5">5</a></span>
+<span class="normal"><a href="#__codelineno-15-6">6</a></span>
+<span class="normal"><a href="#__codelineno-15-7">7</a></span>
+<span class="normal"><a href="#__codelineno-15-8">8</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1"></a><span class="n">image_to_save</span> <span class="o">=</span> <span class="n">open_cv_images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2"></a><span class="n">bgr_image_to_save</span> <span class="o">=</span> <span class="n">rgb_images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3"></a><span class="n">pil_image_to_save</span> <span class="o">=</span> <span class="n">pil_images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<a id="__codelineno-15-4" name="__codelineno-15-4"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;opencv image type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">image_to_save</span><span class="p">)</span><span class="si">}</span><span class="s2">, shape: </span><span class="si">{</span><span class="n">image_to_save</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-15-5" name="__codelineno-15-5"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;rgb converted opencv image type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">bgr_image_to_save</span><span class="p">)</span><span class="si">}</span><span class="s2">, shape: </span><span class="si">{</span><span class="n">bgr_image_to_save</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-15-6" name="__codelineno-15-6"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;pil image type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">pil_image_to_save</span><span class="p">)</span><span class="si">}</span><span class="s2">, size: </span><span class="si">{</span><span class="n">pil_image_to_save</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-15-7" name="__codelineno-15-7"></a><span class="n">display_images</span> <span class="o">=</span> <span class="p">[</span><span class="n">image_to_save</span><span class="p">,</span> <span class="n">bgr_image_to_save</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">pil_image_to_save</span><span class="p">)]</span>
+<a id="__codelineno-15-8" name="__codelineno-15-8"></a><span class="n">display_image_comparison</span><span class="p">(</span><span class="n">display_images</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code>opencv image type: &lt;class &#39;numpy.ndarray&#39;&gt;, shape: (224, 256, 3)
+rgb converted opencv image type: &lt;class &#39;numpy.ndarray&#39;&gt;, shape: (224, 256, 3)
+pil image type: &lt;class &#39;PIL.PngImagePlugin.PngImageFile&#39;&gt;, size: (256, 224)
+</code></pre></div></td></tr></table></div>
+<p><img alt="svg" src="/images/load_images_with_opencv_and_matplotlib_files/load_images_with_opencv_and_matplotlib_29_1.png" /></p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-16-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-16-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-16-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-16-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-16-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-16-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-16-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-16-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-16-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-16-10">10</a></span>
+<span class="normal"><a href="#__codelineno-16-11">11</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1"></a><span class="c1"># Using `os.path.join` because it makes sure the `/` dividers are correct in file_paths</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2"></a>
+<a id="__codelineno-16-3" name="__codelineno-16-3"></a><span class="c1"># cv2.imwrite(filename_string, img_ndarray)</span>
+<a id="__codelineno-16-4" name="__codelineno-16-4"></a><span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="s2">&quot;loaded_w_cv.png&quot;</span><span class="p">),</span> <span class="n">image_to_save</span><span class="p">)</span>
+<a id="__codelineno-16-5" name="__codelineno-16-5"></a><span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="s2">&quot;loaded_and_convert_w_cv.png&quot;</span><span class="p">),</span> <span class="n">bgr_image_to_save</span><span class="p">)</span>
+<a id="__codelineno-16-6" name="__codelineno-16-6"></a>
+<a id="__codelineno-16-7" name="__codelineno-16-7"></a><span class="c1"># PIL my_image_variable.save(filename_string)</span>
+<a id="__codelineno-16-8" name="__codelineno-16-8"></a><span class="n">pil_image_to_save</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="s2">&quot;loaded_w_pil.png&quot;</span><span class="p">))</span>
+<a id="__codelineno-16-9" name="__codelineno-16-9"></a>
+<a id="__codelineno-16-10" name="__codelineno-16-10"></a><span class="c1"># Validate our work</span>
+<a id="__codelineno-16-11" name="__codelineno-16-11"></a><span class="nb">print</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="s2">&quot;*.png&quot;</span><span class="p">)))</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>[&#39;./out_/images/loaded_and_convert_w_cv.png&#39;, &#39;./out_/images/loaded_w_pil.png&#39;, &#39;./out_/images/loaded_w_cv.png&#39;]
+</code></pre></div></td></tr></table></div>
+<h2 id="10b-saving-colors-correctly">10b. Saving Colors Correctly<a class="headerlink" href="#10b-saving-colors-correctly" title="Permanent link">🔗</a></h2>
+<p>Again, OpenCV uses BGR by default on save and load, PIL uses RGB. If you converted to RGB with OpenCV you should convert color back before you save.</p>
+<p>So when we saved the OpenCV BGR Image <code>loaded_w_cv.png</code> it saved as a png that will be read as RGB (except by OpenCV).</p>
+<p>When we saved the PIL RGB Image <code>loaded_w_pil.png</code> it also saved as a png that will be read as RGB (except by OpenCV)</p>
+<p>To demonstrate, we'll load all 3 with PIL again, since that defaults to RGB loading</p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-17-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-17-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-17-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-17-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-17-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-17-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-17-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-17-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-17-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-17-10">10</a></span>
+<span class="normal"><a href="#__codelineno-17-11">11</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1"></a><span class="c1"># Using an `f` formatted string is also fine, so long as you know whether the variables have `/`&#39;s</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2"></a><span class="n">saved_files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">output_dir</span><span class="si">}</span><span class="s2">/*.png&quot;</span><span class="p">)</span>
+<a id="__codelineno-17-3" name="__codelineno-17-3"></a>
+<a id="__codelineno-17-4" name="__codelineno-17-4"></a><span class="n">images_to_display</span> <span class="o">=</span> <span class="p">[]</span>
+<a id="__codelineno-17-5" name="__codelineno-17-5"></a><span class="k">for</span> <span class="n">file_path</span> <span class="ow">in</span> <span class="n">saved_files</span><span class="p">:</span>
+<a id="__codelineno-17-6" name="__codelineno-17-6"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+<a id="__codelineno-17-7" name="__codelineno-17-7"></a>    <span class="n">raw_pil</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+<a id="__codelineno-17-8" name="__codelineno-17-8"></a>    <span class="n">np_img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">raw_pil</span><span class="p">)</span>
+<a id="__codelineno-17-9" name="__codelineno-17-9"></a>    <span class="n">images_to_display</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np_img</span><span class="p">)</span>
+<a id="__codelineno-17-10" name="__codelineno-17-10"></a>
+<a id="__codelineno-17-11" name="__codelineno-17-11"></a><span class="n">display_image_comparison</span><span class="p">(</span><span class="n">images_to_display</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code>./out_/images/loaded_and_convert_w_cv.png
+./out_/images/loaded_w_pil.png
+./out_/images/loaded_w_cv.png
+</code></pre></div></td></tr></table></div>
+<p><img alt="svg" src="/images/load_images_with_opencv_and_matplotlib_files/load_images_with_opencv_and_matplotlib_32_1.png" /></p>
+<h2 id="11-wrap-up">11. Wrap-up<a class="headerlink" href="#11-wrap-up" title="Permanent link">🔗</a></h2>
+<p>Those are all the basic loading, converting, and saving operations that I've needed to use with OpenCV and PIL, working in an ipython notebook or in regular <code>.py</code> scripts</p>
+<p>As a final code snippet, we'll go from OpenCV Image (numpy ndarray) to PIL Image, as we haven't actually needed to do that without saving first. You'd use this if you want to pass numpy loaded arrays into a PIL-based image processing pipeline (ex. torchvision transforms)</p>
+<p><strong>NOTE</strong> Again check your color conversions. <code>Image.fromarray()</code> expects an array in RGB form and will treat whatever 3-channel array you give it as such.</p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Python</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-18-1">1</a></span>
+<span class="normal"><a href="#__codelineno-18-2">2</a></span>
+<span class="normal"><a href="#__codelineno-18-3">3</a></span>
+<span class="normal"><a href="#__codelineno-18-4">4</a></span>
+<span class="normal"><a href="#__codelineno-18-5">5</a></span>
+<span class="normal"><a href="#__codelineno-18-6">6</a></span>
+<span class="normal"><a href="#__codelineno-18-7">7</a></span>
+<span class="normal"><a href="#__codelineno-18-8">8</a></span>
+<span class="normal"><a href="#__codelineno-18-9">9</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1"></a><span class="n">cv_image_to_convert</span> <span class="o">=</span> <span class="n">open_cv_images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cv image: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">cv_image_to_convert</span><span class="p">)</span><span class="si">}</span><span class="s2">, shape </span><span class="si">{</span><span class="n">cv_image_to_convert</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-18-3" name="__codelineno-18-3"></a>
+<a id="__codelineno-18-4" name="__codelineno-18-4"></a><span class="n">new_pil_image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">(</span><span class="n">cv_image_to_convert</span><span class="p">)</span>
+<a id="__codelineno-18-5" name="__codelineno-18-5"></a><span class="n">pil_from_rgb_cv</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">(</span><span class="n">rgb_images</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<a id="__codelineno-18-6" name="__codelineno-18-6"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;converted to pil: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">new_pil_image</span><span class="p">)</span><span class="si">}</span><span class="s2">, size: </span><span class="si">{</span><span class="n">new_pil_image</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s2">, mode: </span><span class="si">{</span><span class="n">new_pil_image</span><span class="o">.</span><span class="n">mode</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-18-7" name="__codelineno-18-7"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;rgb_cv image converted to pil: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">pil_from_rgb_cv</span><span class="p">)</span><span class="si">}</span><span class="s2">, size: </span><span class="si">{</span><span class="n">pil_from_rgb_cv</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s2">, mode: </span><span class="si">{</span><span class="n">pil_from_rgb_cv</span><span class="o">.</span><span class="n">mode</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-18-8" name="__codelineno-18-8"></a><span class="n">to_display</span> <span class="o">=</span> <span class="p">[</span><span class="n">cv_image_to_convert</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">new_pil_image</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">pil_from_rgb_cv</span><span class="p">)]</span>
+<a id="__codelineno-18-9" name="__codelineno-18-9"></a><span class="n">display_image_comparison</span><span class="p">(</span><span class="n">to_display</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Text Only</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code>cv image: &lt;class &#39;numpy.ndarray&#39;&gt;, shape (224, 256, 3)
+converted to pil: &lt;class &#39;PIL.Image.Image&#39;&gt;, size: (256, 224), mode: RGB
+rgb_cv image converted to pil: &lt;class &#39;PIL.Image.Image&#39;&gt;, size: (256, 224), mode: RGB
+</code></pre></div></td></tr></table></div>
+<p><img alt="svg" src="/images/load_images_with_opencv_and_matplotlib_files/load_images_with_opencv_and_matplotlib_34_1.png" /></p>
+
+  <hr>
+<div class="md-source-file">
+  <small>
+    
+      Last update:
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">June 7, 2023</span>
+      
+        <br>
+        Created:
+        <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">June 7, 2023</span>
+      
+    
+  </small>
+</div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <a href="#" class="md-top md-icon" data-md-component="top" hidden>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+            Back to top
+          </a>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../brain-dump-2022/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Brain Dump 2022" rel="prev">
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  Previous
+                </span>
+                Brain Dump 2022
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../computer-vision-part-2/" class="md-footer__link md-footer__link--next" aria-label="Next: Computer Vision Part 2: Load Tagged Data With Pytorch" rel="next">
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  Next
+                </span>
+                Computer Vision Part 2: Load Tagged Data With Pytorch
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2020 - 2023 Gerard Bentley
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+      
+      
+    
+    <a href="https://gerardbentley.com/@gar" target="_blank" rel="noopener" title="gerardbentley.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M433 179.11c0-97.2-63.71-125.7-63.71-125.7-62.52-28.7-228.56-28.4-290.48 0 0 0-63.72 28.5-63.72 125.7 0 115.7-6.6 259.4 105.63 289.1 40.51 10.7 75.32 13 103.33 11.4 50.81-2.8 79.32-18.1 79.32-18.1l-1.7-36.9s-36.31 11.4-77.12 10.1c-40.41-1.4-83-4.4-89.63-54a102.54 102.54 0 0 1-.9-13.9c85.63 20.9 158.65 9.1 178.75 6.7 56.12-6.7 105-41.3 111.23-72.9 9.8-49.8 9-121.5 9-121.5zm-75.12 125.2h-46.63v-114.2c0-49.7-64-51.6-64 6.9v62.5h-46.33V197c0-58.5-64-56.6-64-6.9v114.2H90.19c0-122.1-5.2-147.9 18.41-175 25.9-28.9 79.82-30.8 103.83 6.1l11.6 19.5 11.6-19.5c24.11-37.1 78.12-34.8 103.83-6.1 23.71 27.3 18.4 53 18.4 175z"/></svg>
+    </a>
+  
+    
+    
+      
+      
+    
+    <a href="https://twitter.com/garsbar35plus" target="_blank" rel="noopener" title="twitter.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+    </a>
+  
+    
+    
+      
+      
+    
+    <a href="https://github.com/gerardrbentley" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+      
+      
+    
+    <a href="https://www.linkedin.com/in/gerardrbentley/" target="_blank" rel="noopener" title="www.linkedin.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.footer", "navigation.tracking", "toc.follow", "search.suggest", "search.highlight", "search.share", "header.autohide"], "search": "../../assets/javascripts/workers/search.12658920.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.5cf534bf.min.js"></script>
+      
+    
+  </body>
+</html>
