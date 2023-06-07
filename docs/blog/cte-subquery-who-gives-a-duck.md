@@ -506,7 +506,7 @@ Would you rather spend the mental cycles re-writing it to a CTE or move on with 
 
 Keep exploring!
 
-- More on this example from [@FrankPachot](https://twitter.com/FranckPachot/status/1665960170222919680?s=20): [dbfiddle.uk/wLZ4H496](dbfiddle.uk/wLZ4H496)
+- More on this example from [@FranckPachot](https://twitter.com/FranckPachot/status/1665960170222919680?s=20): [dbfiddle.uk/wLZ4H496](dbfiddle.uk/wLZ4H496)
 - [https://duckdb.org/2023/05/26/correlated-subqueries-in-sql.html](https://duckdb.org/2023/05/26/correlated-subqueries-in-sql.html)
 - [https://duckdb.org/2022/09/30/postgres-scanner.html](https://duckdb.org/2022/09/30/postgres-scanner.html)
 - [https://hakibenita.com/be-careful-with-cte-in-postgre-sql](https://hakibenita.com/be-careful-with-cte-in-postgre-sql)
